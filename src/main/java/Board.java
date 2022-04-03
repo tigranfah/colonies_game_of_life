@@ -1,48 +1,47 @@
-public class GameOfLifeBoard {
-    public static void main(String[] args) {
-        GameOfLifeBoard testBoard = new GameOfLifeBoard(5, 8);
-        testBoard.setAlive(2, 2);
-        testBoard.setAlive(2, 3);
-        testBoard.setAlive(2, 4);
-        testBoard.printBoard();
-        System.out.println(testBoard.numberOfAliveNeighbours(2, 3));
-        testBoard.step();
-        testBoard.printBoard();
-        testBoard.step();
-        testBoard.printBoard();
-    }
+// no need to add the extra GameOfLife* in front of the classes, its evident
+public class Board {
+
+    private static final String ALIVE_CELL = " o ";
+    private static final String DEAD_CELL = " . ";
+
     int width;
     int height;
     int[][] board;
 
-    public GameOfLifeBoard(int height, int width) {
+    public Board(int height, int width) {
         this.width = width;
         this.height = height;
         this.board = new int[height][width];
     }
+
     public void printBoard() {
         System.out.println();
         for (int i = 0; i < height; i++) {
-            String row = "[";
+//            String row = "[";
+            String row = "";
             for (int j = 0; j < width; j++) {
                 if (this.board[i][j] == 0) {
-                    row += ".";
+                    row += DEAD_CELL;
                 }
                 else {
-                    row += "*";
+                    row += ALIVE_CELL;
                 }
             }
-            row += "]";
+//            row += "]";
             System.out.println(row);
         }
         System.out.println();
+        ClearConsole();
     }
+
     public void setAlive(int i, int j) {
         this.board[i][j] = 1;
     }
+
     public void setDead(int i, int j) {
         this.board[i][j] = 0;
     }
+
     public int numberOfAliveNeighbours(int i, int j) {
         int number = 0;
         number += isValidState(i-1, j-1);
@@ -55,6 +54,7 @@ public class GameOfLifeBoard {
         number += isValidState(i+1, j+1);
         return number;
     }
+
     public void step() {
         int[][] newBoard = new int[height][width];
         for (int i = 0; i < height; i++) {
@@ -80,10 +80,26 @@ public class GameOfLifeBoard {
         }
         this.board = newBoard;
     }
+
     public int isValidState(int i, int j) {
         if (j < 0 || j >= width || i < 0 || i >= height) {
             return 0;
         }
         return this.board[i][j];
+    }
+
+    // clear the output of the screen to get smooth running console
+    public static void ClearConsole(){
+        try{
+            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
+
+            if(operatingSystem.contains("Windows")){
+                Runtime.getRuntime().exec("cls");
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 }
