@@ -1,5 +1,3 @@
-package core;
-
 public class Main {
 
     // the starting point of the program should be separate,

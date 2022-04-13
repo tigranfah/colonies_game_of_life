@@ -1,2 +1,2 @@
-cd src/main/core
+cd src/main/java
 javac *.java

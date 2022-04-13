@@ -13,7 +13,7 @@ public class Renderer {
     public void render(Board board) {
         for (int i = 0; i < board.getHeight(); ++i) {
             for (int j = 0; j < board.getWidth(); ++j) {
-                this.renderCell(this.board.getCellAt(j, i));
+                this.renderCell(board.getCellAt(new Position(j, i)));
             }
         }
     }

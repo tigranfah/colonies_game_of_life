@@ -12,7 +12,7 @@ public class Position {
     // }
 
     public Position(int x, int y) {
-        if (Board.isValueInValidRange(x) && Board.isValueInValidRange(y)) {
+        if (Position.isValueInValidRange(x) && Position.isValueInValidRange(y)) {
             this.x = x;
             this.y = y;
         } else {
@@ -35,6 +35,12 @@ public class Position {
 
     public String toString() {
         return "(" + this.x + ", " + this.y + ")";
+    }
+
+
+    public static boolean isValueInValidRange(int value) {
+        if (value >= 0) return true;
+        return false;
     }
 
 }

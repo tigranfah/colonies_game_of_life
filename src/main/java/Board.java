@@ -1,4 +1,4 @@
-package exceptions;
+import exceptions.InvalidPosition;
 
 // no need to add the extra GameOfLife* in front of the classes, its evident
 public class Board {
@@ -37,8 +37,6 @@ public class Board {
 //     }
 
     public void setAlive(Position pos) {
-        if (pos == null || !this.isValidBoardPosition(pos))
-            throw InvalidPosition(pos + " is an invalid position.");
         this.board[pos.getY()][pos.getX()] = new Cell();
     }
 
@@ -86,9 +84,9 @@ public class Board {
     // }
 
     public boolean isCellAlive(Position pos) {
-        if (!Board.isValidBoardPosition(pos)) {
-            Errors.RuntimeWarning(i + " and " + j + " are not valid value for position.");
-            if (this.board.getCellAt(i, j) != null)
+        if (!this.isValidBoardPosition(pos)) {
+            Errors.RuntimeWarning(pos.getX() + " and " + pos.getX() + " are not valid value for position.");
+            if (this.getCellAt(pos) != null)
                 return true;
         }
         return false;
