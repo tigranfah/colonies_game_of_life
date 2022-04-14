@@ -12,12 +12,8 @@ public class Position {
     // }
 
     public Position(int x, int y) {
-        if (Position.isValueInValidRange(x) && Position.isValueInValidRange(y)) {
-            this.x = x;
-            this.y = y;
-        } else {
-            Errors.RuntimeWarning("Cloud not init Position with args (" + x + " " + y + ")");
-        }
+        this.x = x;
+        this.y = y;
     }
 
     public Position(Position pos) {
@@ -38,9 +34,7 @@ public class Position {
     }
 
 
-    public static boolean isValueInValidRange(int value) {
-        if (value >= 0) return true;
-        return false;
-    }
+//    public static boolean isValueInValidRange(int value) {
+//    }
 
 }

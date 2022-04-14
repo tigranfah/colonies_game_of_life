@@ -10,10 +10,90 @@ public class Board {
     private int height;
     private Cell[][] board;
 
-    public Board(int height, int width) {
+    public Board(int width, int height) {
         this.width = width;
         this.height = height;
         this.board = new Cell[height][width];
+        this.fillWithEmptyCells();
+    }
+
+    private void fillWithEmptyCells() {
+        if (this.board == null || this.width == 0 || this.height == 0) {
+            Errors.RuntimeWarning("the Board instance variables are not initialized properly.");
+            return;
+        }
+
+        for (int i = 0; i < this.width; ++i) {
+            for (int j = 0; j < this.height; ++j) {
+                this.board[i][j] = new Cell(false);
+            }
+        }
+    }
+
+    public int getNumberAliveNeighbours(Position pos) {
+        int[][] posInds = {
+                // up left
+                {pos.getX() - 1, pos.getY() + 1},
+                // up
+                {pos.getX(), pos.getY() + 1},
+                // up right
+                {pos.getX() + 1, pos.getY() + 1},
+                // right
+                {pos.getX() + 1, pos.getY()},
+                // right down
+                {pos.getX() + 1, pos.getY() - 1},
+                // down
+                {pos.getX(), pos.getY() - 1},
+                // left down
+                {pos.getX() - 1, pos.getY() - 1},
+                // left
+                {pos.getX() - 1, pos.getY()},
+        };
+
+        int numberOfAliveNeighbours = 0;
+
+        for (int[] inds : posInds) {
+            Position currentPos = new Position(inds[0], inds[1]);
+            if (this.isValidBoardPosition(currentPos)) {
+                if (this.isCellAlive(currentPos)) {
+                    ++numberOfAliveNeighbours;
+                }
+            }
+        }
+
+//        System.out.printf("%d ", numberOfAliveNeighbours);
+        return numberOfAliveNeighbours;
+    }
+
+    public void step() {
+
+        int setAliveCount = 0;
+        Position[] toSetAlivePositions = new Position[this.width * this.height];
+
+        int setDeadCount = 0;
+        Position[] toSetDeadPositions = new Position[this.width * this.height];
+
+        for (int i = 0; i < this.height; ++i) {
+            for (int j = 0; j < this.width; ++j) {
+                Position currentPosition = new Position(j, i);
+//                System.out.println(currentPosition);
+                int numberOfNeighbours = this.getNumberAliveNeighbours(currentPosition);
+                if (this.isCellAlive(currentPosition)) {
+                    if (numberOfNeighbours < 2 || numberOfNeighbours > 3)
+                        toSetDeadPositions[setDeadCount++] = currentPosition;
+                }
+                else if (!this.isCellAlive(currentPosition)) {
+                    if (numberOfNeighbours == 3)
+                        toSetAlivePositions[setAliveCount++] = currentPosition;
+                }
+            }
+        }
+
+        for (int i = 0; i < setAliveCount; ++i)
+            this.setAlive(toSetAlivePositions[i]);
+
+        for (int i = 0; i < setDeadCount; ++i)
+            this.setDead(toSetDeadPositions[i]);
     }
 
 //     public void printBoard() {
@@ -37,11 +117,11 @@ public class Board {
 //     }
 
     public void setAlive(Position pos) {
-        this.board[pos.getY()][pos.getX()] = new Cell();
+        this.board[pos.getY()][pos.getX()].setAlive();
     }
 
     public void setDead(Position pos) {
-        this.board[pos.getY()][pos.getX()] = null;
+        this.board[pos.getY()][pos.getX()].setDead();
     }
 
     // public int numberOfAliveNeighbours(int i, int j) {
@@ -86,10 +166,9 @@ public class Board {
     public boolean isCellAlive(Position pos) {
         if (!this.isValidBoardPosition(pos)) {
             Errors.RuntimeWarning(pos.getX() + " and " + pos.getX() + " are not valid value for position.");
-            if (this.getCellAt(pos) != null)
-                return true;
         }
-        return false;
+        Cell cell = this.getCellAt(pos);
+        return cell.isAlive();
     }
 
     // clear the output of the screen to get smooth running console
@@ -123,6 +202,17 @@ public class Board {
 
     public int getHeight() {
         return this.height;
+    }
+
+    public String toString() {
+        String strRepr = "";
+        for (int i = 0; i < this.height; ++i) {
+            for (int j = 0; j < this.width; ++j) {
+                Cell cell = this.getCellAt(new Position(j, i));
+                strRepr += cell.toString();
+            }
+        }
+        return strRepr;
     }
 
 }

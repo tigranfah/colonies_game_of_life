@@ -3,7 +3,25 @@ public class Main {
     // the starting point of the program should be separate,
     // we would create a formal starting point later
     public static void main(String[] args) {
-        Board testBoard = new Board(20, 20);
+        Board testBoard = new Board(10, 10);
+
+        testBoard.setAlive(new Position(2, 2));
+        testBoard.setAlive(new Position(2, 3));
+        testBoard.setAlive(new Position(2, 4));
+
+        Renderer renderer = new Renderer();
+
+        while (true) {
+            renderer.render(testBoard);
+            testBoard.step();
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         // testBoard.setAlive(2, 2);
         // testBoard.setAlive(2, 3);
         // testBoard.setAlive(2, 4);
