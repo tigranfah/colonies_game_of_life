@@ -1,4 +1,4 @@
-import exceptions.InvalidPosition;
+package core;
 
 // no need to add the extra GameOfLife* in front of the classes, its evident
 public class Board {

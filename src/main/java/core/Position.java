@@ -1,4 +1,4 @@
-// I am creating a class for abstraction over the x, y arguments in our game,
+package core;// I am creating a class for abstraction over the x, y arguments in our game,
 // morover we might want to extend the idea of position in the future (ege 3rd dimentsion in the game)
 
 public class Position {

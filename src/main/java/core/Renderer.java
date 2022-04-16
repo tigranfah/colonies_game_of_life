@@ -1,3 +1,5 @@
+package core;
+
 public class Renderer {
 
     private float renderingSpeed = 0.5f;
