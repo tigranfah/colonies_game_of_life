@@ -1,4 +1,7 @@
 {
+  "name" : "Sample board",
+  "width" : 30,
+  "height" : 30,
   "alive_cells" : [
     { "x" : 5, "y" : 7 },
     { "x" : 6, "y" : 4 },

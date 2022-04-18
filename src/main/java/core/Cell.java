@@ -18,6 +18,11 @@ public class Cell {
             this.character = Utils.DEFAULT_DEAD_CELL_CHARACTER;
     }
 
+    public Cell(Cell cell) {
+        this.isAlive = cell.isAlive();
+        this.character = cell.getCharacter();
+    }
+
     public void setAlive() {
         this.isAlive = true;
         this.character = Utils.DEFAULT_ALIVE_CELL_CHARACTER;
@@ -26,6 +31,10 @@ public class Cell {
     public void setDead() {
         this.isAlive = false;
         this.character = Utils.DEFAULT_DEAD_CELL_CHARACTER;
+    }
+
+    public char getCharacter() {
+        return this.character;
     }
 
     public boolean isAlive() { return this.isAlive; }
