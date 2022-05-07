@@ -1,46 +1,72 @@
 package core;
 
-public class Cell {
+//*
+// This class operates with this simple rules.
+// if colonyIndex variable is -1 or < -1 => cell is dead.
+// if colonyIndex is any other integer, it is a representative of that particular colony member.
+// the aim for this class is to achieve minimalistic computation to effectively
+// process large number of cells.
+// /
+public class Cell implements Cloneable {
 
     private boolean isAlive;
-    private char character;
+    private int colonyIndex;
 
     public Cell() {
-        this.isAlive = false;
-        this.character = Utils.DEFAULT_DEAD_CELL_CHARACTER;
+        this(0);
     }
 
-    public Cell(boolean isAlive) {
-        this.isAlive = isAlive;
-        if (isAlive)
-            this.character = Utils.DEFAULT_ALIVE_CELL_CHARACTER;
-        else
-            this.character = Utils.DEFAULT_DEAD_CELL_CHARACTER;
+    public Cell(int colonyIndex) {
+//        if (colonyIndex <= 0)
+//            this.isAlive = false;
+//        else
+//            this.isAlive = true;
+        this.setColonyIndex(colonyIndex);
     }
 
     public Cell(Cell cell) {
         this.isAlive = cell.isAlive();
-        this.character = cell.getCharacter();
+        this.colonyIndex = cell.colonyIndex;
     }
 
-    public void setAlive() {
+    public Cell clone() {
+        try {
+            return (Cell) super.clone();
+        } catch (CloneNotSupportedException e){
+            return null;
+        }
+    }
+
+    public void setColonyIndex(int colonyIndex) {
+        this.isAlive = (colonyIndex > 0);
+        this.colonyIndex = colonyIndex;
+    }
+
+    public void setAlive(int colonyIndex) {
         this.isAlive = true;
-        this.character = Utils.DEFAULT_ALIVE_CELL_CHARACTER;
+        this.colonyIndex = colonyIndex;
     }
 
     public void setDead() {
         this.isAlive = false;
-        this.character = Utils.DEFAULT_DEAD_CELL_CHARACTER;
+        this.colonyIndex = 0;
     }
 
-    public char getCharacter() {
-        return this.character;
+    public int getColonyIndex() {
+        return this.colonyIndex;
     }
 
     public boolean isAlive() { return this.isAlive; }
+
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other.getClass() != getClass()) return false;
+        Cell cell = (Cell) other;
+        return (this.isAlive == cell.isAlive && this.colonyIndex == cell.colonyIndex);
+    }
     
     public String toString() {
-        return Character.toString(this.character);
+        return Integer.toString(this.colonyIndex);
     }
 
 }
