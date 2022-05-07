@@ -1,6 +1,6 @@
 package core;
 
-public class Cell {
+public class Cell implements Cloneable {
 
     private boolean isAlive;
     private char character;
@@ -21,6 +21,14 @@ public class Cell {
     public Cell(Cell cell) {
         this.isAlive = cell.isAlive();
         this.character = cell.getCharacter();
+    }
+
+    public Cell clone() {
+        try {
+            return (Cell) super.clone();
+        } catch (CloneNotSupportedException e){
+            return null;
+        }
     }
 
     public void setAlive() {

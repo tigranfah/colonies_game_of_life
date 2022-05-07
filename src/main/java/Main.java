@@ -6,8 +6,7 @@ public class Main {
     // the starting point of the program should be separate,
     // we would create a formal starting point later
     public static void main(String[] args) {
-//        Board board = new Board(30, 30);
-        Board board = new Board("src/main/resources/sample_board.json");
+        Board board = new Board(30, 30);
 
 //        fillBoardFromFile(board, "src/main/resources/sample_board.json");
 

@@ -1,46 +1,39 @@
 package core;
 
 import exceptions.InvalidPosition;
-import org.json.JSONObject;
-import utils.FileUtils;
 
-// no need to add the extra GameOfLife* in front of the classes, its evident
-public class Board {
+public class Board implements Cloneable {
 
     private int width = 0;
     private int height = 0;
-    private Cell[][] board = null;
+    private Cell[][] cellGrid = null;
 
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
         this.fillWithEmptyCells();
-        System.out.println("inited");
     }
 
-    public Board(String fileName) {
-        JSONObject jsonObj = FileUtils.parseJsonFile(fileName);
-        if (jsonObj == null) {
-            System.out.printf("Could not read %s file.", fileName);
-            return;
-        }
-        FileUtils.initializeBoardFromJsonObject(this, jsonObj);
+    public Board(Board other) {
+        this.width = other.width;
+        this.height = other.height;
+        this.setCellGrid(other.getCellGridCopy());
     }
 
     public void fillWithEmptyCells() {
         if (this.width == 0 || this.height == 0)
             throw new RuntimeException("Board instance variables are not initialized properly.");
 
-        this.board = new Cell[this.height][this.width];
+        this.cellGrid = new Cell[this.height][this.width];
 
         for (int i = 0; i < this.width; ++i) {
             for (int j = 0; j < this.height; ++j) {
-                this.board[i][j] = new Cell(false);
+                this.cellGrid[i][j] = new Cell(false);
             }
         }
     }
 
-    private int getNumberAliveNeighbours(Position pos) {
+    private int getNumberOfAliveNeighbours(Position pos) {
         int[][] posInds = {
                 // up left
                 {pos.getX() - 1, pos.getY() + 1},
@@ -86,7 +79,7 @@ public class Board {
             for (int j = 0; j < this.width; ++j) {
                 Position currentPosition = new Position(j, i);
 //                System.out.println(currentPosition);
-                int numberOfNeighbours = this.getNumberAliveNeighbours(currentPosition);
+                int numberOfNeighbours = this.getNumberOfAliveNeighbours(currentPosition);
                 if (this.isCellAlive(currentPosition)) {
                     if (numberOfNeighbours < 2 || numberOfNeighbours > 3)
                         toSetDeadPositions[setDeadCount++] = currentPosition;
@@ -105,24 +98,44 @@ public class Board {
             this.setDead(toSetDeadPositions[i]);
     }
 
+    public Board clone() {
+        try {
+            Board cloned = (Board) super.clone();
+            cloned.setCellGrid(this.getCellGridCopy());
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
     public void setAlive(Position pos) {
         if (pos == null)
             throw new NullPointerException();
-        this.board[pos.getY()][pos.getX()].setAlive();
+        this.cellGrid[pos.getY()][pos.getX()].setAlive();
     }
 
     public void setDead(Position pos) {
         if (pos == null)
             throw new NullPointerException();
-        this.board[pos.getY()][pos.getX()].setDead();
+        this.cellGrid[pos.getY()][pos.getX()].setDead();
     }
 
-    public Cell getCellAt(Position pos) {
+    //*
+    // Returns copy of the object.
+    // /
+    public Cell getCellCopyAt(Position pos) {
         if (pos == null)
             throw new NullPointerException();
         if (!this.isValidBoardPosition(pos))
             throw new InvalidPosition(pos);
-        return new Cell(this.board[pos.getY()][pos.getX()]);
+        return new Cell(this.cellGrid[pos.getY()][pos.getX()]);
+    }
+
+    //*
+    // Returns the actual reference to the object for fast access.
+    // /
+    public Cell getCellAt(Position pos) {
+        return this.cellGrid[pos.getY()][pos.getX()];
     }
 
     public boolean isCellAlive(Position pos) {
@@ -136,6 +149,36 @@ public class Board {
         if (pos.getX() >= 0 && pos.getX() < this.width &&
             pos.getY() >= 0 && pos.getY() < this.height) return true;
         return false;
+    }
+
+    //*
+    // Mutator for gridBoard instance variable.
+    // Sets the reference of the cell grid.
+    // /
+    public void setCellGrid(Cell[][] cells) {
+        this.cellGrid = cells;
+    }
+
+    //*
+    // Accessor (privacy leak) for gridBoard instance variable.
+    // This method should most likely be used for read only purposes to
+    // access the variable faster without copying it.
+    // /
+    public Cell[][] getCellGrid() {
+        return this.cellGrid;
+    }
+
+    //*
+    // Accessor for gridBoard instance variable.
+    // Returns a deep copy of the board instance variable.
+    // /
+    public Cell[][] getCellGridCopy() {
+        Cell[][] newCopy = new Cell[this.height][this.width];
+        for (int i = 0; i < this.width; ++i) {
+            for (int j = 0; j < this.height; ++j)
+                newCopy[i][j] = this.cellGrid[i][j].clone();
+        }
+        return newCopy;
     }
 
     public int getWidth() {
