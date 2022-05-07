@@ -1,3 +1,5 @@
+package core;
+
 public class Utils {
 
     // private static final int WIDTH, HEIGHT;

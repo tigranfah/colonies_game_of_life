@@ -1,27 +1,37 @@
+package core;
+
 import exceptions.InvalidPosition;
+import org.json.JSONObject;
+import utils.FileUtils;
 
 // no need to add the extra GameOfLife* in front of the classes, its evident
 public class Board {
 
-    private static final String ALIVE_CELL = " o ";
-    private static final String DEAD_CELL = " . ";
-
-    private int width;
-    private int height;
-    private Cell[][] board;
+    private int width = 0;
+    private int height = 0;
+    private Cell[][] board = null;
 
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
-        this.board = new Cell[height][width];
         this.fillWithEmptyCells();
+        System.out.println("inited");
     }
 
-    private void fillWithEmptyCells() {
-        if (this.board == null || this.width == 0 || this.height == 0) {
-            Errors.RuntimeWarning("the Board instance variables are not initialized properly.");
+    public Board(String fileName) {
+        JSONObject jsonObj = FileUtils.parseJsonFile(fileName);
+        if (jsonObj == null) {
+            System.out.printf("Could not read %s file.", fileName);
             return;
         }
+        FileUtils.initializeBoardFromJsonObject(this, jsonObj);
+    }
+
+    public void fillWithEmptyCells() {
+        if (this.width == 0 || this.height == 0)
+            throw new RuntimeException("Board instance variables are not initialized properly.");
+
+        this.board = new Cell[this.height][this.width];
 
         for (int i = 0; i < this.width; ++i) {
             for (int j = 0; j < this.height; ++j) {
@@ -30,7 +40,7 @@ public class Board {
         }
     }
 
-    public int getNumberAliveNeighbours(Position pos) {
+    private int getNumberAliveNeighbours(Position pos) {
         int[][] posInds = {
                 // up left
                 {pos.getX() - 1, pos.getY() + 1},
@@ -61,7 +71,6 @@ public class Board {
             }
         }
 
-//        System.out.printf("%d ", numberOfAliveNeighbours);
         return numberOfAliveNeighbours;
     }
 
@@ -96,104 +105,37 @@ public class Board {
             this.setDead(toSetDeadPositions[i]);
     }
 
-//     public void printBoard() {
-//         System.out.println();
-//         for (int i = 0; i < height; i++) {
-// //            String row = "[";
-//             String row = "";
-//             for (int j = 0; j < width; j++) {
-//                 if (this.board[i][j] == 0) {
-//                     row += DEAD_CELL;
-//                 }
-//                 else {
-//                     row += ALIVE_CELL;
-//                 }
-//             }
-// //            row += "]";
-//             System.out.println(row);
-//         }
-//         System.out.println();
-//         ClearConsole();
-//     }
-
     public void setAlive(Position pos) {
+        if (pos == null)
+            throw new NullPointerException();
         this.board[pos.getY()][pos.getX()].setAlive();
     }
 
     public void setDead(Position pos) {
+        if (pos == null)
+            throw new NullPointerException();
         this.board[pos.getY()][pos.getX()].setDead();
     }
 
-    // public int numberOfAliveNeighbours(int i, int j) {
-    //     int number = 0;
-    //     number += isValidState(i-1, j-1);
-    //     number += isValidState(i-1, j);
-    //     number += isValidState(i-1, j+1);
-    //     number += isValidState(i, j-1);
-    //     number += isValidState(i, j+1);
-    //     number += isValidState(i+1, j-1);
-    //     number += isValidState(i+1, j);
-    //     number += isValidState(i+1, j+1);
-    //     return number;
-    // }
-
-    // public void step() {
-    //     int[][] newBoard = new int[height][width];
-    //     for (int i = 0; i < height; i++) {
-    //         for (int j = 0; j < width; j++) {
-    //             int aliveNeighbours = numberOfAliveNeighbours(i, j);
-    //             if (this.board[i][j] == 1) {
-    //                 if (aliveNeighbours < 2) {
-    //                     newBoard[i][j] = 0;
-    //                 }
-    //                 else if (aliveNeighbours == 2 || aliveNeighbours == 3) {
-    //                     newBoard[i][j] = 1;
-    //                 }
-    //                 else if (aliveNeighbours > 3) {
-    //                     newBoard[i][j] = 0;
-    //                 }
-    //             }
-    //             else {
-    //                 if (aliveNeighbours == 3) {
-    //                     newBoard[i][j] = 1;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     this.board = newBoard;
-    // }
+    public Cell getCellAt(Position pos) {
+        if (pos == null)
+            throw new NullPointerException();
+        if (!this.isValidBoardPosition(pos))
+            throw new InvalidPosition(pos);
+        return new Cell(this.board[pos.getY()][pos.getX()]);
+    }
 
     public boolean isCellAlive(Position pos) {
-        if (!this.isValidBoardPosition(pos)) {
-            Errors.RuntimeWarning(pos.getX() + " and " + pos.getX() + " are not valid value for position.");
-        }
         Cell cell = this.getCellAt(pos);
         return cell.isAlive();
     }
 
-    // clear the output of the screen to get smooth running console
-    public static void ClearConsole(){
-        try{
-            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
-
-            if(operatingSystem.contains("Windows")){
-                Runtime.getRuntime().exec("cls");
-            } else {
-                Runtime.getRuntime().exec("clear");
-            }
-        }catch(Exception e){
-            System.out.println(e);
-        }
-    }
-
     public boolean isValidBoardPosition(Position pos) {
+        if (pos == null)
+            throw new NullPointerException();
         if (pos.getX() >= 0 && pos.getX() < this.width &&
             pos.getY() >= 0 && pos.getY() < this.height) return true;
         return false;
-    }
-
-    public Cell getCellAt(Position pos) {
-        return this.board[pos.getY()][pos.getX()];
     }
 
     public int getWidth() {
@@ -202,6 +144,14 @@ public class Board {
 
     public int getHeight() {
         return this.height;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     public String toString() {

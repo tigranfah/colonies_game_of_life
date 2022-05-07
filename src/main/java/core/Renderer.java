@@ -1,3 +1,5 @@
+package core;
+
 public class Renderer {
 
     private float renderingSpeed = 0.5f;
@@ -18,6 +20,21 @@ public class Renderer {
                 this.renderCell(board.getCellAt(new Position(j, i)));
             }
             System.out.printf("\n");
+        }
+    }
+
+    // clear the output of the screen to get smooth running console
+    public static void clearConsole(){
+        try{
+            String operatingSystem = System.getProperty("os.name"); //Check the current operating system
+
+            if(operatingSystem.contains("Windows")){
+                Runtime.getRuntime().exec("cls");
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+        }catch(Exception e){
+            System.out.println(e);
         }
     }
 
