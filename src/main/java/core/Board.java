@@ -2,6 +2,10 @@ package core;
 
 import exceptions.InvalidPosition;
 
+// the code is written in the using Principle #1.
+// That is separation of the data and functionality.
+// Data (model) is Board here.
+// More about this principle here: https://blog.klipse.tech/databook/2020/10/02/separate-code-data.html
 public class Board implements Cloneable {
 
     private int width = 0;
@@ -20,7 +24,15 @@ public class Board implements Cloneable {
         this.setCellGrid(other.getCellGridCopy());
     }
 
-    public void fillWithEmptyCells() {
+    protected boolean isValidBoardPosition(Position pos) {
+        if (pos == null)
+            throw new NullPointerException("Position cannot be null.");
+        if (pos.getX() >= 0 && pos.getX() < this.width &&
+                pos.getY() >= 0 && pos.getY() < this.height) return true;
+        return false;
+    }
+
+    private void fillWithEmptyCells() {
         if (this.width == 0 || this.height == 0)
             throw new RuntimeException("Board instance variables are not initialized properly.");
 
@@ -28,74 +40,9 @@ public class Board implements Cloneable {
 
         for (int i = 0; i < this.width; ++i) {
             for (int j = 0; j < this.height; ++j) {
-                this.cellGrid[i][j] = new Cell(false);
+                this.cellGrid[i][j] = new Cell(0);
             }
         }
-    }
-
-    private int getNumberOfAliveNeighbours(Position pos) {
-        int[][] posInds = {
-                // up left
-                {pos.getX() - 1, pos.getY() + 1},
-                // up
-                {pos.getX(), pos.getY() + 1},
-                // up right
-                {pos.getX() + 1, pos.getY() + 1},
-                // right
-                {pos.getX() + 1, pos.getY()},
-                // right down
-                {pos.getX() + 1, pos.getY() - 1},
-                // down
-                {pos.getX(), pos.getY() - 1},
-                // left down
-                {pos.getX() - 1, pos.getY() - 1},
-                // left
-                {pos.getX() - 1, pos.getY()},
-        };
-
-        int numberOfAliveNeighbours = 0;
-
-        for (int[] inds : posInds) {
-            Position currentPos = new Position(inds[0], inds[1]);
-            if (this.isValidBoardPosition(currentPos)) {
-                if (this.isCellAlive(currentPos)) {
-                    ++numberOfAliveNeighbours;
-                }
-            }
-        }
-
-        return numberOfAliveNeighbours;
-    }
-
-    public void step() {
-
-        int setAliveCount = 0;
-        Position[] toSetAlivePositions = new Position[this.width * this.height];
-
-        int setDeadCount = 0;
-        Position[] toSetDeadPositions = new Position[this.width * this.height];
-
-        for (int i = 0; i < this.height; ++i) {
-            for (int j = 0; j < this.width; ++j) {
-                Position currentPosition = new Position(j, i);
-//                System.out.println(currentPosition);
-                int numberOfNeighbours = this.getNumberOfAliveNeighbours(currentPosition);
-                if (this.isCellAlive(currentPosition)) {
-                    if (numberOfNeighbours < 2 || numberOfNeighbours > 3)
-                        toSetDeadPositions[setDeadCount++] = currentPosition;
-                }
-                else if (!this.isCellAlive(currentPosition)) {
-                    if (numberOfNeighbours == 3)
-                        toSetAlivePositions[setAliveCount++] = currentPosition;
-                }
-            }
-        }
-
-        for (int i = 0; i < setAliveCount; ++i)
-            this.setAlive(toSetAlivePositions[i]);
-
-        for (int i = 0; i < setDeadCount; ++i)
-            this.setDead(toSetDeadPositions[i]);
     }
 
     public Board clone() {
@@ -108,24 +55,12 @@ public class Board implements Cloneable {
         }
     }
 
-    public void setAlive(Position pos) {
-        if (pos == null)
-            throw new NullPointerException();
-        this.cellGrid[pos.getY()][pos.getX()].setAlive();
-    }
-
-    public void setDead(Position pos) {
-        if (pos == null)
-            throw new NullPointerException();
-        this.cellGrid[pos.getY()][pos.getX()].setDead();
-    }
-
     //*
     // Returns copy of the object.
     // /
     public Cell getCellCopyAt(Position pos) {
         if (pos == null)
-            throw new NullPointerException();
+            throw new NullPointerException("Position cannot be null.");
         if (!this.isValidBoardPosition(pos))
             throw new InvalidPosition(pos);
         return new Cell(this.cellGrid[pos.getY()][pos.getX()]);
@@ -135,20 +70,9 @@ public class Board implements Cloneable {
     // Returns the actual reference to the object for fast access.
     // /
     public Cell getCellAt(Position pos) {
-        return this.cellGrid[pos.getY()][pos.getX()];
-    }
-
-    public boolean isCellAlive(Position pos) {
-        Cell cell = this.getCellAt(pos);
-        return cell.isAlive();
-    }
-
-    public boolean isValidBoardPosition(Position pos) {
         if (pos == null)
-            throw new NullPointerException();
-        if (pos.getX() >= 0 && pos.getX() < this.width &&
-            pos.getY() >= 0 && pos.getY() < this.height) return true;
-        return false;
+            throw new NullPointerException("Position cannot be null.");
+        return this.cellGrid[pos.getY()][pos.getX()];
     }
 
     //*
@@ -156,6 +80,8 @@ public class Board implements Cloneable {
     // Sets the reference of the cell grid.
     // /
     public void setCellGrid(Cell[][] cells) {
+        if (cells == null)
+            throw new NullPointerException("Grid cell cannot be null.");
         this.cellGrid = cells;
     }
 
@@ -190,10 +116,14 @@ public class Board implements Cloneable {
     }
 
     public void setWidth(int width) {
+        if (width < 0)
+            throw new IllegalArgumentException("width cannot be " + width);
         this.width = width;
     }
 
     public void setHeight(int height) {
+        if (height < 0)
+            throw new IllegalArgumentException("height cannot be " + height);
         this.height = height;
     }
 
