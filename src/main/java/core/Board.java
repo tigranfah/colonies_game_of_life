@@ -13,6 +13,7 @@ public class Board implements Cloneable {
 
     public Board(int width, int height) {
         cellGrid = new Matrix<Cell>(height, width);
+        this.fillWithEmptyCells();
     }
 
     public Board(Matrix<Cell> cellGrid) {
@@ -116,11 +117,12 @@ public class Board implements Cloneable {
     }
 
     public String toString() {
-        String strRepr = "";
+        String strRepr = "Board (" + this.getWidth() + ", " + this.getHeight() + ")";
         for (int i = 0; i < this.getHeight(); ++i) {
+            strRepr += "\n";
             for (int j = 0; j < this.getWidth(); ++j) {
                 Cell cell = this.getCellAt(new Position(j, i));
-                strRepr += cell.toString();
+                strRepr += cell.toString() + " ";
             }
         }
         return strRepr;

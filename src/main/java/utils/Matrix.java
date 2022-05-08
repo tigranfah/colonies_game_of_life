@@ -1,5 +1,7 @@
 package utils;
 
+import core.Cell;
+
 public class Matrix<ElemType> implements Cloneable {
 
     private int width, height;
@@ -50,12 +52,31 @@ public class Matrix<ElemType> implements Cloneable {
 
     public String toString() {
         String strRepr = "";
-        strRepr += "(" + this.height + ", " + this.width + ")\n";
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j)
+        strRepr += "(" + this.height + ", " + this.width + ")";
+        for (int i = 0; i < height; ++i) {
+            strRepr += "\n";
+            for (int j = 0; j < width; ++j)
                 strRepr += this.get(i, j).toString() + "\t";
         }
         return strRepr;
+    }
+
+    public static Matrix<Integer> convertCellToIntegerMatrix(Matrix<Cell> cellMatrix) {
+        Matrix<Integer> intMatrix = new Matrix<Integer>(cellMatrix.getHeight(), cellMatrix.getWidth());
+        for (int i = 0; i < cellMatrix.getHeight(); ++i) {
+            for (int j = 0; j < cellMatrix.getWidth(); ++j)
+                intMatrix.set(cellMatrix.get(i, j).getColonyIndex(), i, j);
+        }
+        return intMatrix;
+    }
+
+    public static Matrix<Cell> convertIntToCellMatrix(Matrix<Integer> intMatrix) {
+        Matrix<Cell> cellMatrix = new Matrix<>(intMatrix.getHeight(), intMatrix.getWidth());
+        for (int i = 0; i < intMatrix.getHeight(); ++i) {
+            for (int j = 0; j < intMatrix.getWidth(); ++j)
+                cellMatrix.set(new Cell(intMatrix.get(i, j)), i, j);
+        }
+        return cellMatrix;
     }
 
 }
