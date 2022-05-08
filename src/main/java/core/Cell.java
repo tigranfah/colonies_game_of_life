@@ -29,6 +29,7 @@ public class Cell implements Cloneable {
         this.colonyIndex = cell.colonyIndex;
     }
 
+    @Override
     public Cell clone() {
         try {
             return (Cell) super.clone();

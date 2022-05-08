@@ -1,5 +1,5 @@
 # this is for mac and linux only
 
-javac src/main/java/**/*.java
 cd src/main/java
+javac core/*.java exceptions/*.java Main.java
 java Main
