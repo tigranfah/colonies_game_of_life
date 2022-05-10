@@ -7,7 +7,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class ShaderProgram {
 
-    public static final String BASE_PATH = "resources/shaders/";
+    public static final String BASE_PATH = "resources/";
 
     private final ShaderLoader vertexShader, fragmentShader;
 
@@ -40,11 +40,17 @@ public class ShaderProgram {
         fragmentShader.cleanup();
     }
 
+    /**
+     * Enable program and attach shaders
+     */
     public void enable(){
         enabled = true;
         glUseProgram(programRef);
     }
 
+    /**
+     * Release program
+     */
     public void disable(){
         enabled = false;
         glUseProgram(0);
