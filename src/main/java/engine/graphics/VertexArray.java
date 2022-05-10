@@ -41,6 +41,7 @@ public class VertexArray {
     }
 
     private void init() throws GLException {
+        glBindVertexArray(vertexArrayRef);
         prepareVertices();
         prepareIndices();
 
