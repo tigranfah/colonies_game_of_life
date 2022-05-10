@@ -43,7 +43,8 @@ public class ShaderLoader {
 
         if(glGetShaderi(shaderRef, GL_COMPILE_STATUS) == GL_FALSE){
 
-            throw new ShaderCompilationException(toString(), glGetShaderInfoLog());
+//            throw new ShaderCompilationException(toString(), glGetShaderInfoLog());
+            throw new ShaderCompilationException(toString());
         }
 
         return this;
