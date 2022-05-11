@@ -91,8 +91,8 @@ public class BoardManager {
         return this.board;
     }
 
-    public Board getBoardCopy() {
-        return this.board.clone();
-    }
+//    public Board getBoardCopy() {
+//        return this.board.copy();
+//    }
 
 }

@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.io.*;
 
 import core.Cell;
+import utils.Int;
 import utils.Pattern;
 import exceptions.InvalidFileFormat;
 import utils.Matrix;
@@ -75,7 +76,7 @@ public final class FileManager {
                 sc.nextLine();
                 for (int j = 0; j < width; ++j) {
                     if (sc.hasNextInt())
-                    gridCell.set(sc.nextInt(), i, j);
+                    gridCell.set(new Int(sc.nextInt()), i, j);
                 }
             }
 
@@ -121,7 +122,7 @@ public final class FileManager {
             );
         }
 
-        private static void extractMatrixInfoToFile(Matrix<Integer> matrix, PrintWriter writer) {
+        private static void extractMatrixInfoToFile(Matrix<Int> matrix, PrintWriter writer) {
             writer.print(matrix.getHeight() + " " + matrix.getWidth());
             for (int i = 0; i < matrix.getHeight(); ++i) {
                 writer.print("\n");
