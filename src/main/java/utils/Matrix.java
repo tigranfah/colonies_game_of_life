@@ -2,8 +2,6 @@ package utils;
 
 import core.Cell;
 
-import java.lang.reflect.InvocationTargetException;
-
 public class Matrix<ElemType> {
 
     private int width, height;
