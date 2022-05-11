@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.exceptions.GLException;
 import engine.utils.BufferUtils;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -23,7 +24,7 @@ public class VertexArray {
 
     private final int vertexArrayRef;
 
-    public VertexArray(float[] v, byte[] i){
+    public VertexArray(float[] v, byte[] i) throws GLException {
         vertices = BufferUtils.toFloatBuffer(v);
         indices = BufferUtils.toByteBuffer(i);
         numberOfVertices = (byte) i.length;
@@ -39,9 +40,15 @@ public class VertexArray {
         cleanup();
     }
 
-    private void init(){
+    private void init() throws GLException {
+        glBindVertexArray(vertexArrayRef);
         prepareVertices();
         prepareIndices();
+
+        final int err = glGetError();
+        if(err != GL_NO_ERROR){
+            throw new GLException(err);
+        }
 
         cleanup();
     }

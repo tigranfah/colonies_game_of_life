@@ -42,7 +42,8 @@ public class ShaderLoader {
         glCompileShader(shaderRef);
 
         if(glGetShaderi(shaderRef, GL_COMPILE_STATUS) == GL_FALSE){
-            throw new ShaderCompilationException(shaderPath);
+
+            throw new ShaderCompilationException(toString(), glGetShaderInfoLog(shaderRef));
         }
 
         return this;
@@ -82,6 +83,10 @@ public class ShaderLoader {
     public void cleanup(){
         shaderRef = -1;
         glDeleteShader(shaderRef);
+    }
+
+    public String toString(){
+        return "A shader at path " + shaderPath;
     }
 
 }

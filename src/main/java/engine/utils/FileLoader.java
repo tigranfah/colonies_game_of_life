@@ -23,6 +23,7 @@ public class FileLoader {
 
         while(sc.hasNextLine()){
             content.append(sc.nextLine());
+            content.append("\n");
         }
 
         sc.close();
