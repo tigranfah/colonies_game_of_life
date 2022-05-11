@@ -1,5 +1,7 @@
 package core;
 
+import utils.Copyable;
+
 //*
 // This class operates with this simple rules.
 // if colonyIndex variable is -1 or < -1 => cell is dead.
@@ -7,7 +9,7 @@ package core;
 // the aim for this class is to achieve minimalistic computation to effectively
 // process large number of cells.
 // /
-public class Cell implements Cloneable {
+public class Cell implements Copyable {
 
     private boolean isAlive;
     private int colonyIndex;
@@ -30,10 +32,10 @@ public class Cell implements Cloneable {
     }
 
     @Override
-    public Cell clone() {
+    public Cell copy() {
         try {
             return (Cell) super.clone();
-        } catch (CloneNotSupportedException e){
+        } catch (CloneNotSupportedException e) {
             return null;
         }
     }

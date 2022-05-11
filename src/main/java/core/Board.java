@@ -1,13 +1,14 @@
 package core;
 
 import exceptions.InvalidPosition;
+import utils.Copyable;
 import utils.Matrix;
 
 // the code is written in the using Principle #1.
 // That is separation of the data and functionality.
 // Data (model) is Board here.
 // More about this principle here: https://blog.klipse.tech/databook/2020/10/02/separate-code-data.html
-public class Board implements Cloneable {
+public class Board {
 
     private Matrix<Cell> cellGrid = null;
 
@@ -18,10 +19,6 @@ public class Board implements Cloneable {
 
     public Board(Matrix<Cell> cellGrid) {
         this.cellGrid = cellGrid;
-    }
-
-    public Board(Board other) {
-        this.setCellGrid(other.getCellGridCopy());
     }
 
     protected boolean isValidBoardPosition(Position pos) {
@@ -42,16 +39,6 @@ public class Board implements Cloneable {
             for (int j = 0; j < this.getWidth(); ++j) {
                 this.cellGrid.set(new Cell(0), i, j);
             }
-        }
-    }
-
-    public Board clone() {
-        try {
-            Board cloned = (Board) super.clone();
-            cloned.setCellGrid(this.getCellGridCopy());
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            return null;
         }
     }
 
@@ -94,20 +81,6 @@ public class Board implements Cloneable {
         return this.cellGrid;
     }
 
-    //*
-    // Accessor for gridBoard instance variable.
-    // Returns a deep copy of the board instance variable.
-    // /
-    public Matrix<Cell> getCellGridCopy() {
-//        Cell[][] newCopy = new Cell[this.height][this.width];
-//        for (int i = 0; i < this.width; ++i) {
-//            for (int j = 0; j < this.height; ++j)
-//                newCopy[i][j] = this.cellGrid[i][j].clone();
-//        }
-//        return newCopy;
-        return this.cellGrid.clone();
-    }
-
     public int getWidth() {
         return this.cellGrid.getWidth();
     }
@@ -117,7 +90,7 @@ public class Board implements Cloneable {
     }
 
     public String toString() {
-        String strRepr = "Board (" + this.getWidth() + ", " + this.getHeight() + ")";
+        String strRepr = "Board (" + this.getHeight() + ", " + this.getWidth() + ")";
         for (int i = 0; i < this.getHeight(); ++i) {
             strRepr += "\n";
             for (int j = 0; j < this.getWidth(); ++j) {
