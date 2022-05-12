@@ -28,6 +28,16 @@ public class BoardManager {
 
     public GameSetting getSetting() { return this.setting; }
 
+    public void destroyColony(int indexOfColony) {
+        Colony col = this.setting.getColony(indexOfColony);
+        if (col == null) {
+            System.err.printf("No colony with index %d, cannot destory it.", indexOfColony);
+            return;
+        }
+        this.board.setCellAt(new ColonyCell(0), col.getKingPosition());
+        this.setting.removeColony(col);
+    }
+
     public void step() {
         if (this.setting.getType() == GameType.STANDARD)
             this.standardGameStep();
@@ -47,7 +57,9 @@ public class BoardManager {
 
                 if (this.board.isWorkerAt(currentPosition)) {
                     Worker worker = (Worker) this.board.getCellAt(currentPosition);
-                    this.setting.getColony(worker.getColonyIndex()).performWorkerIncrement();
+                    Colony colony = this.setting.getColony(worker.getColonyIndex());
+                    if (colony != null)
+                        colony.performWorkerIncrement();
                 }
 
                 ArrayList<Position> neighbourPositions = this.getNeighbourPositions(currentPosition);
@@ -78,6 +90,9 @@ public class BoardManager {
         for (Position pos : toSetDeadPositions)
             this.makeDead(pos);
 
+        for (Integer i : this.checkKingAttack())
+            this.destroyColony(i);
+
         for (Colony colony : this.setting.getColonies()) {
             colony.performIterationIncrement();
             if (colony.getCoins() > 1.0f) {
@@ -86,6 +101,28 @@ public class BoardManager {
                 this.board.setBoardSubpart(workers, colony.getKingPosition().clone(), true);
             }
         }
+
+//        int isOver = game();
+//        if () {
+    }
+
+    private ArrayList<Integer> checkKingAttack() {
+        ArrayList<Integer> colonyiesToDestroy = new ArrayList<>();
+        for (Colony col : this.setting.getColonies()) {
+            for (Position pos : this.getAliveNeighbours(this.getNeighbourPositions(col.getKingPosition()))) {
+                if (this.board.getCellAt(pos).getColonyIndex() != col.getColonyIndex()) {
+                    colonyiesToDestroy.add(col.getColonyIndex());
+                    break;
+                }
+            }
+        }
+        return colonyiesToDestroy;
+    }
+
+    public int isGameOver() {
+        if (this.setting.getNumberOfColonies() == 1)
+            return this.setting.getColonies().get(0).getColonyIndex();
+        return -1;
     }
 
     private void standardGameStep() {

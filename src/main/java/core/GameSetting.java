@@ -40,6 +40,10 @@ public class GameSetting {
         }
     }
 
+    protected void removeColony(Colony colony) {
+        this.colonies.remove(colony);
+    }
+
     public Colony getColony(int index) {
         for (Colony col : this.colonies) {
             if (col.getColonyIndex() == index)

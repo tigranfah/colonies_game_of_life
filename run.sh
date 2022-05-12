@@ -2,7 +2,7 @@
 
 SRC_DIR="src/main/java"
 
-javac src/main/java/**/*.java src/main/java/Main.java
 cd src/main/java
+javac **/*.java Main.java
 
 java Main

@@ -1,10 +1,6 @@
 package utils;
 
-import core.Colony;
-import core.ColonyCell;
 import core.Worker;
-
-import java.util.ArrayList;
 
 public class Pattern extends Matrix<Integer> implements Cloneable {
 
