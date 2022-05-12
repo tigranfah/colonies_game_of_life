@@ -12,7 +12,7 @@ import utils.Matrix;
 // In game of life there are well known patters that show certain,
 // deterministic behaviour. This is class is a type to store this kind of cases (patterns).
 // /
-public class Pattern extends Matrix<Int> {
+public class Pattern extends Matrix<Integer> {
 
     public Pattern(int height, int width) { super(height, width); }
 
@@ -22,7 +22,7 @@ public class Pattern extends Matrix<Int> {
         for (int i = 0; i < this.getHeight(); ++i) {
             for (int j = 0; j < this.getWidth(); ++j) {
                 try {
-                    this.set(new Int(intMatrix[i][j]), i, j);
+                    this.set(new Integer(intMatrix[i][j]), i, j);
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }

@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.io.*;
 
 import core.Cell;
-import utils.Int;
+import core.ColonyCell;
 import utils.Pattern;
 import exceptions.InvalidFileFormat;
 import utils.Matrix;
@@ -40,7 +40,7 @@ public final class FileManager {
             FileInputStream inStream = null;
             try {
                 inStream = new FileInputStream(filePath);
-                Matrix<Cell> cellGrid = Matrix.convertIntToCellMatrix(
+                Matrix<ColonyCell> cellGrid = Matrix.convertIntToCellMatrix(
                         FileReader.extractMatrixInfoFromFile(inStream)
                 );
                 return new Board(cellGrid);
@@ -76,7 +76,7 @@ public final class FileManager {
                 sc.nextLine();
                 for (int j = 0; j < width; ++j) {
                     if (sc.hasNextInt())
-                    gridCell.set(new Int(sc.nextInt()), i, j);
+                    gridCell.set(sc.nextInt(), i, j);
                 }
             }
 
@@ -122,7 +122,7 @@ public final class FileManager {
             );
         }
 
-        private static void extractMatrixInfoToFile(Matrix<Int> matrix, PrintWriter writer) {
+        private static void extractMatrixInfoToFile(Matrix<Integer> matrix, PrintWriter writer) {
             writer.print(matrix.getHeight() + " " + matrix.getWidth());
             for (int i = 0; i < matrix.getHeight(); ++i) {
                 writer.print("\n");

@@ -26,10 +26,10 @@ public class ShaderProgram {
     }
 
     public void init(){
-        try{
+        try {
             vertexShader.compile().attachToProgram(programRef);
             fragmentShader.compile().attachToProgram(programRef);
-        }catch (ShaderCompilationException e){
+        } catch (ShaderCompilationException e) {
             e.printStackTrace();
         }
 

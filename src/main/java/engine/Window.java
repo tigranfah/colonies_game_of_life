@@ -105,7 +105,7 @@ public class Window {
      * @param x - horizontal position in pixels
      * @param y - vertical position in pixels
      */
-    public Window setPosition(int x, int y){
+    public Window setPosition(int x, int y) {
         glfwSetWindowPos(windowRef, x, y);
 
         return this;
@@ -114,7 +114,7 @@ public class Window {
     /**
      * Use for smoother FPS
      */
-    public Window enableVSync(){
+    public Window enableVSync() {
         glfwSwapInterval(1);
 
         return this;
@@ -132,12 +132,11 @@ public class Window {
         destroy();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         try {
             Window window = new Window(500, 500, "TEST");
-
             window.centerOnScreen().run();
-        }catch (WindowCreationException e){
+        } catch (WindowCreationException e) {
             e.printStackTrace();
         }
     }

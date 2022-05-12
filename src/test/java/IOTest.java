@@ -14,12 +14,12 @@ public class IOTest {
     public static void main(String[] args) throws IOException {
         FileManager fm = new FileManager();
 
-        BoardManager bm = new BoardManager(10, 15);
+        BoardManager bm = new BoardManager(BoardManager.GameType.STANDARD,10, 15);
 
         Pattern newPattern = new Pattern(new int[][] {
                 {0, 1, 1, 1},
                 {0, 1, 2, 0},
-                {5, 5, 4, 8}
+                {5, 5, 4, 1}
         });
 
 //        FileWriter.writePatternToFile(newPattern, "sample.txt");
