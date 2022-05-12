@@ -2,6 +2,7 @@ import core.Board;
 import core.BoardManager;
 import core.Position;
 import core.Renderer;
+import gui.GameController;
 
 public class Main {
 
@@ -19,13 +20,15 @@ public class Main {
             }
         }
 
-        Renderer renderer = new Renderer();
+//        Renderer renderer = new Renderer();
+        GameController game = new GameController(boardManager.getBoard());
 
         while (true) {
-            Renderer.clearConsole();
-            renderer.render(boardManager.getBoard());
-            System.out.printf("\n");
+//            Renderer.clearConsole();
+//            renderer.render(boardManager.getBoard());
             boardManager.step();
+
+            game.updateBoard(boardManager.getBoard());
 
             try {
                 Thread.sleep(100);
