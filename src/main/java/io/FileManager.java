@@ -11,7 +11,7 @@ import core.Board;
 
 public final class FileManager {
 
-    private static final String PATH_TO_PATTERNS_DIR = "src/main/resources/";
+    private static final String PATH_TO_PATTERNS_DIR = "../resources/";
     private static final String EXTENSION = ".txt";
     private static final String CURRENT_DIR = System.getProperty("user.dir");
 

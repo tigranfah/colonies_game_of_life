@@ -5,8 +5,9 @@ import utils.Pattern;
 public class Colony {
 
     private int colonyIndex;
-    private float coins = 0;
-    private float increment = 0.05f;
+    private double coins = 1.0f;
+    private double increment = 0.5E-2;
+    private double workerIncrement = 1E-4;
     private Position kingPosition;
     Strategy strategy = new Strategy();
 
@@ -21,7 +22,9 @@ public class Colony {
         this.strategy = strategy;
     }
 
-    public void performIncrement() { this.coins += this.increment; }
+    public void performWorkerIncrement() { this.coins += this.workerIncrement; }
+
+    public void performIterationIncrement() { this.coins += this.increment; }
 
     public int getColonyIndex() {
         return colonyIndex;
@@ -39,12 +42,8 @@ public class Colony {
         this.strategy = strategy;
     }
 
-    public float getCoins() {
+    public double getCoins() {
         return coins;
-    }
-
-    public float getIncrement() {
-        return increment;
     }
 
     public Position getKingPosition() {
@@ -56,8 +55,8 @@ public class Colony {
     }
 
     public Pattern makePattern() {
-        if (coins <= 0) return null;
-        --coins;
+        if (coins < 1) return null;
+        coins -= 1.0f;
         return this.strategy.generatePattern();
     }
 

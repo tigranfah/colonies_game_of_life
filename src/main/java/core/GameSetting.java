@@ -21,7 +21,7 @@ public class GameSetting {
         this.colonies = new ArrayList<>();
         this.verifyKingPositions(kingPositions);
         for (int i = 0; i < kingPositions.length; ++i)
-            this.colonies.add(new Colony(i, kingPositions[i]));
+            this.colonies.add(new Colony(i + 1, kingPositions[i]));
     }
 
     private void verifyKingPositions(Position[] kingPositions) {
@@ -41,7 +41,11 @@ public class GameSetting {
     }
 
     public Colony getColony(int index) {
-        return this.colonies.get(index);
+        for (Colony col : this.colonies) {
+            if (col.getColonyIndex() == index)
+                return col;
+        }
+        return null;
     }
 
     public BoardManager.GameType getType() { return this.type; }

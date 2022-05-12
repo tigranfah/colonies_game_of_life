@@ -1,9 +1,9 @@
 package core;
 
+import utils.Matrix;
 import utils.Pair;
+import utils.Pattern;
 
-import java.awt.*;
-import java.nio.channels.Pipe;
 import java.util.ArrayList;
 
 public class BoardManager {
@@ -19,9 +19,9 @@ public class BoardManager {
         this.board = new Board(width, height);
         this.setting = setting;
         if (setting.getType() == GameType.COLONIES) {
-            for (int i = 0; i < setting.getNumberOfColonies(); ++i) {
+            for (int i = 1; i <= setting.getNumberOfColonies(); ++i) {
                 Position pos = this.setting.getColony(i).getKingPosition();
-                this.board.setCellAt(new King(i + 1), pos);
+                this.board.setCellAt(new King(i), pos);
             }
         }
     }
@@ -29,10 +29,6 @@ public class BoardManager {
     public GameSetting getSetting() { return this.setting; }
 
     public void step() {
-        for (Colony colony : this.setting.getColonies()) {
-            colony.performIncrement();
-        }
-
         if (this.setting.getType() == GameType.STANDARD)
             this.standardGameStep();
         else if (this.setting.getType() == GameType.COLONIES)
@@ -47,7 +43,12 @@ public class BoardManager {
         for (int i = 0; i < this.board.getHeight(); ++i) {
             for (int j = 0; j < this.board.getWidth(); ++j) {
                 Position currentPosition = new Position(j, i);
-                if (this.board.getCellAt(currentPosition) instanceof King) continue;
+                if (this.board.isKingAt(currentPosition)) continue;
+
+                if (this.board.isWorkerAt(currentPosition)) {
+                    Worker worker = (Worker) this.board.getCellAt(currentPosition);
+                    this.setting.getColony(worker.getColonyIndex()).performWorkerIncrement();
+                }
 
                 ArrayList<Position> neighbourPositions = this.getNeighbourPositions(currentPosition);
                 ArrayList<Position> aliveNeighbours = this.getAliveNeighbours(neighbourPositions);
@@ -76,6 +77,15 @@ public class BoardManager {
 
         for (Position pos : toSetDeadPositions)
             this.makeDead(pos);
+
+        for (Colony colony : this.setting.getColonies()) {
+            colony.performIterationIncrement();
+            if (colony.getCoins() > 1.0f) {
+                Pattern pat = colony.makePattern();
+                Matrix<Worker> workers = pat.toWorkerMatrix(colony.getColonyIndex());
+                this.board.setBoardSubpart(workers, colony.getKingPosition().clone(), true);
+            }
+        }
     }
 
     private void standardGameStep() {
@@ -145,7 +155,7 @@ public class BoardManager {
 
         for (Position curPos : positions) {
             if (this.isCellAlive(curPos)) {
-                if (this.board.getCellAt(curPos) instanceof King) continue;
+                if (this.board.isKingAt(curPos)) continue;
                 aliveNeighbours.add(curPos);
             }
         }

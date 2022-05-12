@@ -41,6 +41,31 @@ public class Board {
         }
     }
 
+    public <Type extends ColonyCell> void setBoardSubpart(Matrix<Type> cellMatrix, Position atPos, boolean centered) {
+        if (centered) {
+            atPos.setX(atPos.getX() - (cellMatrix.getWidth() / 2));
+            atPos.setY(atPos.getY() - (cellMatrix.getHeight() / 2));
+        }
+        for (int i = 0; i < cellMatrix.getHeight(); ++i) {
+            for (int j = 0; j < cellMatrix.getWidth(); ++j) {
+                Position curPos = new Position(j + atPos.getX(), i + atPos.getY());
+                if (!isValidBoardPosition(curPos)) continue;
+                if (isKingAt(curPos)) continue;
+                Type cell = cellMatrix.get(i, j);
+                if (cell.isAlive())
+                    this.setCellAt(cell, curPos);
+            }
+        }
+    }
+
+    public boolean isKingAt(Position pos) {
+        return this.getCellAt(pos) instanceof King;
+    }
+
+    public boolean isWorkerAt(Position pos) {
+        return this.getCellAt(pos) instanceof Worker;
+    }
+
     //*
     // Returns copy of the object.
     // /

@@ -6,7 +6,7 @@ import core.Worker;
 
 import java.util.ArrayList;
 
-public class Pattern extends Matrix<Integer> {
+public class Pattern extends Matrix<Integer> implements Cloneable {
 
     private String name;
 
@@ -33,17 +33,40 @@ public class Pattern extends Matrix<Integer> {
         }
     }
 
+    private Integer[][] getMatrixElementsCopy() {
+        Integer[][] intMatrix = new Integer[this.getHeight()][this.getWidth()];
+        for (int i = 0; i < this.getHeight(); ++i) {
+            for (int j = 0; j < this.getWidth(); ++j) {
+                intMatrix[i][j] = this.get(i, j);
+            }
+        }
+        return intMatrix;
+    }
+
+    @Override
+    public Pattern clone() {
+        try {
+            Pattern cloned = (Pattern) super.clone();
+            cloned.setMatrixElements(this.getMatrixElementsCopy());
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public Matrix<ColonyCell> toColonyMatrix(int indexOfColony) {
-        Matrix<ColonyCell> cellMatrix = new Matrix<ColonyCell>(this.getHeight(), this.getWidth());
+    public Matrix<Worker> toWorkerMatrix(int indexOfColony) {
+        Matrix<Worker> cellMatrix = new Matrix<Worker>(this.getHeight(), this.getWidth());
         for (int i = 0; i < this.getHeight(); ++i) {
             for (int j = 0; j < this.getWidth(); ++j) {
                 int value = this.get(i, j);
                 if (value != 0)
-                    cellMatrix.set(new ColonyCell(indexOfColony), i, j);
+                    cellMatrix.set(new Worker(indexOfColony), i, j);
+                else
+                    cellMatrix.set(new Worker(0), i, j);
             }
         }
         return cellMatrix;
