@@ -4,6 +4,7 @@ public final class King extends ColonyCell {
 
     public King(int colonyIndex) {
         super(colonyIndex);
+        super.makeAlive(colonyIndex);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package gui.elements;
 
-import core.Board;
-import core.Cell;
-import core.Position;
+import core.*;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Canvas extends JPanel {
+
+    private static final Color[] defaultColors = new Color[]{ Color.RED, Color.BLUE, Color.MAGENTA };
 
     private Board board;
 
@@ -20,10 +20,17 @@ public class Canvas extends JPanel {
 
         for (int i = 0; i < board.getHeight(); ++i) {
             for (int j = 0; j < board.getWidth(); ++j) {
-                Cell c = (board.getCellAt(new Position(j, i)));
+                ColonyCell c = (board.getCellAt(new Position(j, i)));
 
-                if(c.isAlive())
-                    new Square(i, j, new Color(255, 0 ,0)).render(graphics);
+                if(c.isAlive()) {
+                    Color cellColor = defaultColors[c.getColonyIndex() - 1];
+
+                    if(c.toString().equals(String.valueOf(c.getColonyIndex()))){
+                        cellColor = Color.GREEN;
+                    }
+
+                    new Square(i, j, cellColor).render(graphics);
+                }
                 else
                     new Square(i, j).render(graphics);
             }

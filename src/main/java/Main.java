@@ -12,11 +12,12 @@ public class Main {
         setting.setKingPositions(
                 new Position[] {
                         new Position(10, 10),
-                        new Position(30, 15)
+                        new Position(30, 15),
+                        new Position(45, 15),
                 }
         );
 
-        BoardManager boardManager = new BoardManager(setting,45, 20);
+        BoardManager boardManager = new BoardManager(setting,80, 80);
 
 //        for (int i = 0; i < boardManager.getBoard().getHeight(); ++i) {
 //            for (int j = 0; j < boardManager.getBoard().getWidth(); ++j) {
