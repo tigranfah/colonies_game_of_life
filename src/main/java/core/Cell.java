@@ -1,7 +1,5 @@
 package core;
 
-import utils.Copyable;
-
 //*
 // This class operates with this simple rules.
 // if colonyIndex variable is -1 or < -1 => cell is dead.
@@ -9,30 +7,29 @@ import utils.Copyable;
 // the aim for this class is to achieve minimalistic computation to effectively
 // process large number of cells.
 // /
-public class Cell implements Copyable {
+public abstract class Cell implements Cloneable {
 
     private boolean isAlive;
-    private int colonyIndex;
+    private char character;
 
     public Cell() {
-        this(0);
+        this(false);
     }
 
-    public Cell(int colonyIndex) {
-//        if (colonyIndex <= 0)
-//            this.isAlive = false;
-//        else
-//            this.isAlive = true;
-        this.setColonyIndex(colonyIndex);
+    public Cell(boolean isAlive) {
+        if (isAlive)
+            makeAlive();
+        else
+            makeDead();
     }
 
     public Cell(Cell cell) {
-        this.isAlive = cell.isAlive();
-        this.colonyIndex = cell.colonyIndex;
+        this.isAlive = cell.isAlive;
+        this.character = cell.character;
     }
 
     @Override
-    public Cell copy() {
+    public Cell clone() {
         try {
             return (Cell) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -40,36 +37,34 @@ public class Cell implements Copyable {
         }
     }
 
-    public void setColonyIndex(int colonyIndex) {
-        this.isAlive = (colonyIndex > 0);
-        this.colonyIndex = colonyIndex;
-    }
+    public char getCharacter() { return this.character; }
 
-    public void setAlive(int colonyIndex) {
+    protected void setCharacter(char c) { this.character = c; }
+
+    public void makeAlive() {
         this.isAlive = true;
-        this.colonyIndex = colonyIndex;
+        this.character = Utils.DEFAULT_ALIVE_CELL_CHARACTER;
     }
 
-    public void setDead() {
+    public void makeDead() {
         this.isAlive = false;
-        this.colonyIndex = 0;
-    }
-
-    public int getColonyIndex() {
-        return this.colonyIndex;
+        this.character = Utils.DEFAULT_DEAD_CELL_CHARACTER;
     }
 
     public boolean isAlive() { return this.isAlive; }
 
+    protected void setAlive(boolean isAlive) { this.isAlive = isAlive; }
+
+    @Override
     public boolean equals(Object other) {
         if (other == null) return false;
         if (other.getClass() != getClass()) return false;
         Cell cell = (Cell) other;
-        return (this.isAlive == cell.isAlive && this.colonyIndex == cell.colonyIndex);
+        return this.isAlive == cell.isAlive;
     }
     
     public String toString() {
-        return Integer.toString(this.colonyIndex);
+        return Character.toString(this.character);
     }
 
 }

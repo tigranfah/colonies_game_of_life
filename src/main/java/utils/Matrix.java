@@ -1,6 +1,6 @@
 package utils;
 
-import core.Cell;
+import core.ColonyCell;
 
 public class Matrix<ElemType> {
 
@@ -27,6 +27,7 @@ public class Matrix<ElemType> {
     }
 
     public void set(ElemType val, int y, int x) {
+//        System.out.println(this.matrixElements[y][x]);
         this.matrixElements[y][x] = val;
     }
 
@@ -49,22 +50,33 @@ public class Matrix<ElemType> {
         return strRepr;
     }
 
-    public static Matrix<Int> convertCellToIntegerMatrix(Matrix<Cell> cellMatrix) {
-        Matrix<Int> intMatrix = new Matrix<Int>(cellMatrix.getHeight(), cellMatrix.getWidth());
+    public static Matrix<Integer> convertCellToIntegerMatrix(Matrix<ColonyCell> cellMatrix) {
+        Matrix<Integer> intMatrix = new Matrix<Integer>(cellMatrix.getHeight(), cellMatrix.getWidth());
         for (int i = 0; i < cellMatrix.getHeight(); ++i) {
-            for (int j = 0; j < cellMatrix.getWidth(); ++j)
-                intMatrix.set(new Int(cellMatrix.get(i, j).getColonyIndex()), i, j);
+            for (int j = 0; j < cellMatrix.getWidth(); ++j) {
+                intMatrix.set(cellMatrix.get(i, j).getColonyIndex(), i, j);
+            }
         }
         return intMatrix;
     }
 
-    public static Matrix<Cell> convertIntToCellMatrix(Matrix<Int> intMatrix) {
-        Matrix<Cell> cellMatrix = new Matrix<>(intMatrix.getHeight(), intMatrix.getWidth());
+    public static Matrix<ColonyCell> convertIntToCellMatrix(Matrix<Integer> intMatrix) {
+        Matrix<ColonyCell> cellMatrix = new Matrix<>(intMatrix.getHeight(), intMatrix.getWidth());
         for (int i = 0; i < intMatrix.getHeight(); ++i) {
-            for (int j = 0; j < intMatrix.getWidth(); ++j)
-                cellMatrix.set(new Cell(intMatrix.get(i, j).unbox()), i, j);
+            for (int j = 0; j < intMatrix.getWidth(); ++j) {
+                cellMatrix.set(new ColonyCell(intMatrix.get(i, j)), i, j);
+            }
         }
         return cellMatrix;
     }
+
+//    public static Matrix<ColonyCell> convertIntToColonyCellMatrix(Matrix<Integer> intMatrix) {
+//        Matrix<ColonyCell> cellMatrix = new Matrix<>(intMatrix.getHeight(), intMatrix.getWidth());
+//        for (int i = 0; i < intMatrix.getHeight(); ++i) {
+//            for (int j = 0; j < intMatrix.getWidth(); ++j)
+//                cellMatrix.set(new ColonyCell(intMatrix.get(i, j)), i, j);
+//        }
+//        return cellMatrix;
+//    }
 
 }

@@ -1,59 +1,125 @@
 package core;
 
+import utils.Matrix;
+import utils.Pair;
+import utils.Pattern;
+
+import java.util.ArrayList;
+
 public class BoardManager {
 
     private Board board;
+    private GameSetting setting;
 
-    public BoardManager(int width, int height) {
-        this.board = new Board(width, height);
+    public enum GameType {
+        STANDARD, COLONIES
     }
 
+    public BoardManager(GameSetting setting, int width, int height) {
+        this.board = new Board(width, height);
+        this.setting = setting;
+        if (setting.getType() == GameType.COLONIES) {
+            for (int i = 1; i <= setting.getNumberOfColonies(); ++i) {
+                Position pos = this.setting.getColony(i).getKingPosition();
+                this.board.setCellAt(new King(i), pos);
+            }
+        }
+    }
+
+    public GameSetting getSetting() { return this.setting; }
+
     public void step() {
+        if (this.setting.getType() == GameType.STANDARD)
+            this.standardGameStep();
+        else if (this.setting.getType() == GameType.COLONIES)
+            this.coloniesGameStep();
+    }
 
-        int setAliveCount = 0;
-        int width =  this.board.getWidth();
-        int height = this.board.getHeight();
-        Position[] toSetAlivePositions = new Position[width * height];
+    private void coloniesGameStep() {
 
-        int setDeadCount = 0;
-        Position[] toSetDeadPositions = new Position[width * height];
+        ArrayList<Pair<ColonyCell, Position>> toSetAlivePairs = new ArrayList<>();
+        ArrayList<Position> toSetDeadPositions = new ArrayList<>();
 
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
+        for (int i = 0; i < this.board.getHeight(); ++i) {
+            for (int j = 0; j < this.board.getWidth(); ++j) {
                 Position currentPosition = new Position(j, i);
-//                System.out.println(currentPosition);
-                int numberOfNeighbours = this.getNumberOfAliveNeighbours(currentPosition);
+                if (this.board.isKingAt(currentPosition)) continue;
+
+                if (this.board.isWorkerAt(currentPosition)) {
+                    Worker worker = (Worker) this.board.getCellAt(currentPosition);
+                    this.setting.getColony(worker.getColonyIndex()).performWorkerIncrement();
+                }
+
+                ArrayList<Position> neighbourPositions = this.getNeighbourPositions(currentPosition);
+                ArrayList<Position> aliveNeighbours = this.getAliveNeighbours(neighbourPositions);
+                int numberOfNeighbours = aliveNeighbours.size();
+
                 if (this.isCellAlive(currentPosition)) {
                     if (numberOfNeighbours < 2 || numberOfNeighbours > 3)
-                        toSetDeadPositions[setDeadCount++] = currentPosition;
+                        toSetDeadPositions.add(currentPosition);
                 }
                 else if (!this.isCellAlive(currentPosition)) {
-                    if (numberOfNeighbours == 3)
-                        toSetAlivePositions[setAliveCount++] = currentPosition;
+                    if (numberOfNeighbours == 3) {
+                        ColonyCell cell = this.getTheDominantCell(aliveNeighbours).clone();
+//                        System.out.printf("%s, from %s at %s\n", cell.getClass(), pos.toString(), currentPosition.toString());
+//                        int rand = (int) (Math.random() * 4 + 1);
+//                        ColonyCell cell = rand > 3 ? new Fighter(rand) : new Worker(rand);
+//                        System.out.printf("%b %b ", cell instanceof Worker, cell instanceof Fighter);
+//                        System.out.printf("%s %d \n", cell.getClass(), cell.getColonyIndex());
+                        toSetAlivePairs.add(new Pair<>(cell, currentPosition));
+                    }
                 }
             }
         }
 
-        for (int i = 0; i < setAliveCount; ++i)
-            this.setAlive(toSetAlivePositions[i]);
+        for (Pair<ColonyCell, Position> pair : toSetAlivePairs)
+            this.makeAlive(pair.first, pair.second);
 
-        for (int i = 0; i < setDeadCount; ++i)
-            this.setDead(toSetDeadPositions[i]);
+        for (Position pos : toSetDeadPositions)
+            this.makeDead(pos);
+
+        for (Colony colony : this.setting.getColonies()) {
+            colony.performIterationIncrement();
+            if (colony.getCoins() > 1.0f) {
+                Pattern pat = colony.makePattern();
+                Matrix<Worker> workers = pat.toWorkerMatrix(colony.getColonyIndex());
+                this.board.setBoardSubpart(workers, colony.getKingPosition().clone(), true);
+            }
+        }
     }
 
-    public void setAlive(Position pos) {
-        this.board.getCellAt(pos).setAlive(1);
-    }
+    private void standardGameStep() {
 
-    public void setDead(Position pos) {
-        this.board.getCellAt(pos).setDead();
+        ArrayList<Position> toSetAlivePositions = new ArrayList<>();
+        ArrayList<Position> toSetDeadPositions = new ArrayList<>();
+
+        for (int i = 0; i < this.board.getHeight(); ++i) {
+            for (int j = 0; j < this.board.getWidth(); ++j) {
+                Position currentPosition = new Position(j, i);
+                int numberOfNeighbours = this.getAliveNeighbours(this.getNeighbourPositions(currentPosition)).size();
+                if (this.isCellAlive(currentPosition)) {
+                    if (numberOfNeighbours < 2 || numberOfNeighbours > 3)
+                        toSetDeadPositions.add(currentPosition);
+                }
+                else if (!this.isCellAlive(currentPosition)) {
+                    if (numberOfNeighbours == 3)
+                        toSetAlivePositions.add(currentPosition);
+                }
+            }
+        }
+
+        for (Position pos : toSetAlivePositions)
+            this.makeAlive(pos);
+
+        for (Position pos : toSetDeadPositions)
+            this.makeDead(pos);
     }
 
     public boolean isCellAlive(Position pos) {
         return this.board.getCellAt(pos).isAlive();
     }
 
-    private int getNumberOfAliveNeighbours(Position pos) {
+    private ArrayList<Position> getNeighbourPositions(Position pos) {
         int[][] posInds = {
                 // up left
                 {pos.getX() - 1, pos.getY() + 1},
@@ -73,26 +139,59 @@ public class BoardManager {
                 {pos.getX() - 1, pos.getY()},
         };
 
-        int numberOfAliveNeighbours = 0;
+        ArrayList<Position> positions = new ArrayList<>(posInds.length);
 
         for (int[] inds : posInds) {
             Position currentPos = new Position(inds[0], inds[1]);
             if (this.board.isValidBoardPosition(currentPos)) {
-                if (this.isCellAlive(currentPos)) {
-                    ++numberOfAliveNeighbours;
-                }
+                positions.add(currentPos);
             }
         }
+        return positions;
+    }
 
-        return numberOfAliveNeighbours;
+    private ArrayList<Position> getAliveNeighbours(ArrayList<Position> positions) {
+        ArrayList<Position> aliveNeighbours = new ArrayList<>();
+
+        for (Position curPos : positions) {
+            if (this.isCellAlive(curPos)) {
+                if (this.board.isKingAt(curPos)) continue;
+                aliveNeighbours.add(curPos);
+            }
+        }
+        return aliveNeighbours;
+    }
+
+    private ColonyCell getTheDominantCell(ArrayList<Position> positions) {
+        ArrayList<ColonyCell> neighbours = new ArrayList<>(positions.size());
+        for (Position p : positions)
+            neighbours.add(this.board.getCellAt(p));
+
+        if (neighbours.get(0).equals(neighbours.get(0)))
+            return neighbours.get(0);
+        if (neighbours.get(0).equals(neighbours.get(2)))
+            return neighbours.get(0);
+        if (neighbours.get(1).equals(neighbours.get(2)))
+            return neighbours.get(1);
+
+        int rand = (int) (Math.random() * 2);
+        return neighbours.get(rand);
+    }
+
+    public void makeAlive(ColonyCell cell, Position pos) {
+        this.board.setCellAt(cell, pos);
+    }
+
+    public void makeAlive(Position pos) {
+        this.board.getCellAt(pos).makeAlive();
+    }
+
+    public void makeDead(Position pos) {
+        this.board.getCellAt(pos).makeDead();
     }
 
     public Board getBoard() {
         return this.board;
     }
-
-//    public Board getBoardCopy() {
-//        return this.board.copy();
-//    }
 
 }

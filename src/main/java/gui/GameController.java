@@ -1,11 +1,11 @@
 package gui;
 
-import core.Board;
-import core.BoardManager;
-import core.Position;
+import core.*;
 import gui.elements.Canvas;
 import gui.layout.MenuBar;
 import gui.layout.Window;
+import utils.Matrix;
+import utils.Pattern;
 
 import javax.swing.*;
 
@@ -15,14 +15,18 @@ public class GameController {
     private final MenuBar bar;
 
     public static void main(String[] args) {
-        BoardManager boardManager = new BoardManager(30, 30);
+        GameSetting setting = new GameSetting(BoardManager.GameType.COLONIES);
+        setting.setKingPositions(
+                new Position[] {
+                        new Position(10, 10),
+                        new Position(30, 15)
+                }
+        );
+        BoardManager boardManager = new BoardManager(setting,80, 80);
 
-        for (int i = 0; i < boardManager.getBoard().getHeight(); ++i) {
-            for (int j = 0; j < boardManager.getBoard().getWidth(); ++j) {
-                if (Math.random() > 0.4)
-                    boardManager.setAlive(new Position(j, i));
-            }
-        }
+
+        Pattern pat = boardManager.getSetting().getColony(1).getStrategy().generatePattern();
+        Matrix<Worker> mat = pat.toWorkerMatrix(1);
 
         GameController g = new GameController(boardManager.getBoard());
 

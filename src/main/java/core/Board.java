@@ -1,7 +1,6 @@
 package core;
 
 import exceptions.InvalidPosition;
-import utils.Copyable;
 import utils.Matrix;
 
 // the code is written in the using Principle #1.
@@ -10,14 +9,14 @@ import utils.Matrix;
 // More about this principle here: https://blog.klipse.tech/databook/2020/10/02/separate-code-data.html
 public class Board {
 
-    private Matrix<Cell> cellGrid = null;
+    private Matrix<ColonyCell> cellGrid = null;
 
     public Board(int width, int height) {
-        cellGrid = new Matrix<Cell>(height, width);
+        cellGrid = new Matrix<ColonyCell>(height, width);
         this.fillWithEmptyCells();
     }
 
-    public Board(Matrix<Cell> cellGrid) {
+    public Board(Matrix<ColonyCell> cellGrid) {
         this.cellGrid = cellGrid;
     }
 
@@ -33,30 +32,55 @@ public class Board {
         if (this.getWidth() == 0 || this.getHeight() == 0)
             throw new RuntimeException("Board instance variables are not initialized properly.");
 
-        this.cellGrid = new Matrix<Cell>(this.getHeight(), this.getWidth());
+        this.cellGrid = new Matrix<ColonyCell>(this.getHeight(), this.getWidth());
 
         for (int i = 0; i < this.getHeight(); ++i) {
             for (int j = 0; j < this.getWidth(); ++j) {
-                this.cellGrid.set(new Cell(0), i, j);
+                this.cellGrid.set(new ColonyCell(0), i, j);
             }
         }
+    }
+
+    public <Type extends ColonyCell> void setBoardSubpart(Matrix<Type> cellMatrix, Position atPos, boolean centered) {
+        if (centered) {
+            atPos.setX(atPos.getX() - (cellMatrix.getWidth() / 2));
+            atPos.setY(atPos.getY() - (cellMatrix.getHeight() / 2));
+        }
+        for (int i = 0; i < cellMatrix.getHeight(); ++i) {
+            for (int j = 0; j < cellMatrix.getWidth(); ++j) {
+                Position curPos = new Position(j + atPos.getX(), i + atPos.getY());
+                if (!isValidBoardPosition(curPos)) continue;
+                if (isKingAt(curPos)) continue;
+                Type cell = cellMatrix.get(i, j);
+                if (cell.isAlive())
+                    this.setCellAt(cell, curPos);
+            }
+        }
+    }
+
+    public boolean isKingAt(Position pos) {
+        return this.getCellAt(pos) instanceof King;
+    }
+
+    public boolean isWorkerAt(Position pos) {
+        return this.getCellAt(pos) instanceof Worker;
     }
 
     //*
     // Returns copy of the object.
     // /
-    public Cell getCellCopyAt(Position pos) {
+    public ColonyCell getCellCopyAt(Position pos) {
         if (pos == null)
             throw new NullPointerException("Position cannot be null.");
         if (!this.isValidBoardPosition(pos))
             throw new InvalidPosition(pos);
-        return new Cell(this.cellGrid.get(pos.getY(), pos.getX()));
+        return this.cellGrid.get(pos.getY(), pos.getX()).clone();
     }
 
     //*
     // Returns the actual reference to the object for fast access.
     // /
-    public Cell getCellAt(Position pos) {
+    public ColonyCell getCellAt(Position pos) {
         if (pos == null)
             throw new NullPointerException("Position cannot be null.");
         return this.cellGrid.get(pos.getY(), pos.getX());
@@ -66,7 +90,7 @@ public class Board {
     // Mutator for gridBoard instance variable.
     // Sets the reference of the cell grid.
     // /
-    public void setCellGrid(Matrix<Cell> cells) {
+    public void setCellGrid(Matrix<ColonyCell> cells) {
         if (cells == null)
             throw new NullPointerException("Grid cell cannot be null.");
         this.cellGrid = cells;
@@ -77,8 +101,12 @@ public class Board {
     // This method should most likely be used for read only purposes to
     // access the variable faster without copying it.
     // /
-    public Matrix<Cell> getCellGrid() {
+    public Matrix<ColonyCell> getCellGrid() {
         return this.cellGrid;
+    }
+
+    public void setCellAt(ColonyCell cell, Position pos) {
+        this.cellGrid.set(cell, pos.getY(), pos.getX());
     }
 
     public int getWidth() {

@@ -1,5 +1,8 @@
 # this is for mac and linux only
 
+SRC_DIR="src/main/java"
+
+javac src/main/java/**/*.java src/main/java/Main.java
 cd src/main/java
-javac core/*.java exceptions/*.java Main.java
+
 java Main

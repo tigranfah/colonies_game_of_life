@@ -1,20 +1,23 @@
 package utils;
 
-import core.Cell;
-import utils.Matrix;
+import core.Colony;
+import core.ColonyCell;
+import core.Worker;
 
-//*
-// Pattern is simply special case of Matrix. Matrix of integers.
-// e.g.
-// 0 1 0 2
-// 5 6 1 0
-// 6 1 0 0
-// In game of life there are well known patters that show certain,
-// deterministic behaviour. This is class is a type to store this kind of cases (patterns).
-// /
-public class Pattern extends Matrix<Int> {
+import java.util.ArrayList;
 
-    public Pattern(int height, int width) { super(height, width); }
+public class Pattern extends Matrix<Integer> implements Cloneable {
+
+    private String name;
+
+    public Pattern(int height, int width) {
+        super(height, width);
+    }
+
+    public Pattern(String name, int height, int width) {
+        this(height, width);
+        this.name = name;
+    }
 
     public Pattern(int[][] intMatrix) {
         super(intMatrix.length, intMatrix[0].length);
@@ -22,12 +25,51 @@ public class Pattern extends Matrix<Int> {
         for (int i = 0; i < this.getHeight(); ++i) {
             for (int j = 0; j < this.getWidth(); ++j) {
                 try {
-                    this.set(new Int(intMatrix[i][j]), i, j);
+                    this.set(intMatrix[i][j], i, j);
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    private Integer[][] getMatrixElementsCopy() {
+        Integer[][] intMatrix = new Integer[this.getHeight()][this.getWidth()];
+        for (int i = 0; i < this.getHeight(); ++i) {
+            for (int j = 0; j < this.getWidth(); ++j) {
+                intMatrix[i][j] = this.get(i, j);
+            }
+        }
+        return intMatrix;
+    }
+
+    @Override
+    public Pattern clone() {
+        try {
+            Pattern cloned = (Pattern) super.clone();
+            cloned.setMatrixElements(this.getMatrixElementsCopy());
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Matrix<Worker> toWorkerMatrix(int indexOfColony) {
+        Matrix<Worker> cellMatrix = new Matrix<Worker>(this.getHeight(), this.getWidth());
+        for (int i = 0; i < this.getHeight(); ++i) {
+            for (int j = 0; j < this.getWidth(); ++j) {
+                int value = this.get(i, j);
+                if (value != 0)
+                    cellMatrix.set(new Worker(indexOfColony), i, j);
+                else
+                    cellMatrix.set(new Worker(0), i, j);
+            }
+        }
+        return cellMatrix;
     }
 
 }
