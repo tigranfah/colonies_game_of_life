@@ -1,6 +1,5 @@
 package utils;
 
-import core.Cell;
 import core.ColonyCell;
 
 public class Matrix<ElemType> {

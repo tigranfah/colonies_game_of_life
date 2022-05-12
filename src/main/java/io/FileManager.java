@@ -44,7 +44,7 @@ public final class FileManager {
             FileInputStream inStream = null;
             try {
                 inStream = new FileInputStream(filePath);
-                Pattern pat = FileReader.extractMatrixInfoFromFile(inStream);
+                Pattern pat = FileReader.extractMatrixInfoFromFile(inStream, filePath);
                 pat.setName(name);
                 return pat;
             } catch (InvalidFileFormat e) {
@@ -70,7 +70,7 @@ public final class FileManager {
             try {
                 inStream = new FileInputStream(filePath);
                 Matrix<ColonyCell> cellGrid = Matrix.convertIntToCellMatrix(
-                        FileReader.extractMatrixInfoFromFile(inStream)
+                        FileReader.extractMatrixInfoFromFile(inStream, filePath)
                 );
                 return new Board(cellGrid);
             } catch (InvalidFileFormat e) {
@@ -88,28 +88,28 @@ public final class FileManager {
             return null;
         }
 
-        private static Pattern extractMatrixInfoFromFile(FileInputStream inStream) throws InvalidFileFormat {
+        private static Pattern extractMatrixInfoFromFile(FileInputStream inStream, String filePath) throws InvalidFileFormat {
             Scanner sc = new Scanner(inStream);
             int width, height;
 
             if (sc.hasNextInt())
                 height = sc.nextInt();
-            else throw new InvalidFileFormat();
+            else throw new InvalidFileFormat(filePath);
             if (sc.hasNextInt())
                 width = sc.nextInt();
-            else throw new InvalidFileFormat();
+            else throw new InvalidFileFormat(filePath);
 
             Pattern gridCell = new Pattern(height, width);
             for (int i = 0; i < height; ++i) {
                 // \n char
                 if (sc.hasNextLine())
                     sc.nextLine();
-                else throw new InvalidFileFormat();
+                else throw new InvalidFileFormat(filePath);
                 for (int j = 0; j < width; ++j) {
                     if (sc.hasNextInt()) {
                         int a = sc.nextInt();
                         gridCell.set(a, i, j);
-                    } else throw new InvalidFileFormat();
+                    } else throw new InvalidFileFormat(filePath);
                 }
             }
 
@@ -150,7 +150,7 @@ public final class FileManager {
 
         private static void extractBoardInfoToFile(Board board, PrintWriter writer) {
             FileWriter.extractMatrixInfoToFile(
-                    Matrix.convertCellToIntegerMatrix(board.getCellGrid()),
+                        Matrix.convertCellToIntegerMatrix(board.getCellGrid()),
                     writer
             );
         }
