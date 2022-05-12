@@ -9,6 +9,13 @@ public final class King extends ColonyCell {
     @Override
     public void makeAlive(int colonyIndex) { }
 
-    public String toString() { return Character.toString(this.getColonyIndex()); }
+    @Override
+    public char getCharacter() {
+        return this.toString().charAt(0);
+    }
+
+    public String toString() {
+        return Integer.toString(this.getColonyIndex());
+    }
 
 }

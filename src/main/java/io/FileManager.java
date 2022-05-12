@@ -3,7 +3,6 @@ package io;
 import java.util.Scanner;
 import java.io.*;
 
-import core.Cell;
 import core.ColonyCell;
 import utils.Pattern;
 import exceptions.InvalidFileFormat;
@@ -12,15 +11,42 @@ import core.Board;
 
 public final class FileManager {
 
-    private String extension = ".txt";
+    private static final String PATH_TO_PATTERNS_DIR = "src/main/resources/";
+    private static final String EXTENSION = ".txt";
+    private static final String CURRENT_DIR = System.getProperty("user.dir");
+
+    public static String extractNameFromPath(String filePath) {
+        String[] splitPath = filePath.split("/");
+        String name = splitPath[splitPath.length - 1];
+        int lastIndexOf = name.lastIndexOf(".");
+
+        if (lastIndexOf == -1)
+            return "";
+
+        return name.substring(0, lastIndexOf);
+    }
+
+    public static String constructPath(String name) {
+        return PATH_TO_PATTERNS_DIR + name + EXTENSION;
+    }
+
+    public static boolean isValidFile(String path) {
+        File file = new File(path);
+        return (file.isFile() && file.getName().endsWith(EXTENSION));
+    }
 
     public static class FileReader {
 
-        public static Pattern readPatternFromFile(String filePath) {
+        public static Pattern readPatternFromFile(String name) {
+            String filePath = constructPath(name);
+            if (!isValidFile(filePath))
+                throw new IllegalArgumentException(filePath + " is not a valid or accepted file.");
             FileInputStream inStream = null;
             try {
                 inStream = new FileInputStream(filePath);
-                return FileReader.extractMatrixInfoFromFile(inStream);
+                Pattern pat = FileReader.extractMatrixInfoFromFile(inStream);
+                pat.setName(name);
+                return pat;
             } catch (InvalidFileFormat e) {
                 e.printStackTrace();
             } catch (FileNotFoundException e) {
@@ -36,7 +62,10 @@ public final class FileManager {
             return null;
         }
 
-        public static Board readBoardStateFromFile(String filePath) {
+        public static Board readBoardStateFromFile(String name) {
+            String filePath = constructPath(name);
+            if (!isValidFile(filePath))
+                throw new IllegalArgumentException(filePath + " is not a valid or accepted file.");
             FileInputStream inStream = null;
             try {
                 inStream = new FileInputStream(filePath);
@@ -73,10 +102,14 @@ public final class FileManager {
             Pattern gridCell = new Pattern(height, width);
             for (int i = 0; i < height; ++i) {
                 // \n char
-                sc.nextLine();
+                if (sc.hasNextLine())
+                    sc.nextLine();
+                else throw new InvalidFileFormat();
                 for (int j = 0; j < width; ++j) {
-                    if (sc.hasNextInt())
-                    gridCell.set(sc.nextInt(), i, j);
+                    if (sc.hasNextInt()) {
+                        int a = sc.nextInt();
+                        gridCell.set(a, i, j);
+                    } else throw new InvalidFileFormat();
                 }
             }
 

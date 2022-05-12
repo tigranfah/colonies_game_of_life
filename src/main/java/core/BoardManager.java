@@ -9,21 +9,33 @@ import java.util.ArrayList;
 public class BoardManager {
 
     private Board board;
-    private GameType gameType;
+    private GameSetting setting;
 
     public enum GameType {
         STANDARD, COLONIES
     }
 
-    public BoardManager(GameType type, int width, int height) {
+    public BoardManager(GameSetting setting, int width, int height) {
         this.board = new Board(width, height);
-        this.gameType = type;
+        this.setting = setting;
+        if (setting.getType() == GameType.COLONIES) {
+            for (int i = 0; i < setting.getNumberOfColonies(); ++i) {
+                Position pos = this.setting.getColony(i).getKingPosition();
+                this.board.setCellAt(new King(i + 1), pos);
+            }
+        }
     }
 
+    public GameSetting getSetting() { return this.setting; }
+
     public void step() {
-        if (gameType == GameType.STANDARD)
+        for (Colony colony : this.setting.getColonies()) {
+            colony.performIncrement();
+        }
+
+        if (this.setting.getType() == GameType.STANDARD)
             this.standardGameStep();
-        else if (gameType == GameType.COLONIES)
+        else if (this.setting.getType() == GameType.COLONIES)
             this.coloniesGameStep();
     }
 
@@ -35,6 +47,7 @@ public class BoardManager {
         for (int i = 0; i < this.board.getHeight(); ++i) {
             for (int j = 0; j < this.board.getWidth(); ++j) {
                 Position currentPosition = new Position(j, i);
+                if (this.board.getCellAt(currentPosition) instanceof King) continue;
 
                 ArrayList<Position> neighbourPositions = this.getNeighbourPositions(currentPosition);
                 ArrayList<Position> aliveNeighbours = this.getAliveNeighbours(neighbourPositions);
@@ -131,8 +144,10 @@ public class BoardManager {
         ArrayList<Position> aliveNeighbours = new ArrayList<>();
 
         for (Position curPos : positions) {
-            if (this.isCellAlive(curPos))
+            if (this.isCellAlive(curPos)) {
+                if (this.board.getCellAt(curPos) instanceof King) continue;
                 aliveNeighbours.add(curPos);
+            }
         }
         return aliveNeighbours;
     }

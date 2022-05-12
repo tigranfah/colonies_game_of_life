@@ -9,7 +9,7 @@ public class Worker extends ColonyCell {
     @Override
     public void makeAlive(int colonyIndex) {
         super.makeAlive(colonyIndex);
-        this.setCharacter(Utils.getCharPairByIndex(colonyIndex).first);
+        this.setCharacter(Utils.getCharPairByIndex(colonyIndex));
     }
 
     public String toString() { return Character.toString(this.getCharacter()); }
