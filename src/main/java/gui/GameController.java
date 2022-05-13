@@ -8,6 +8,7 @@ import gui.layout.Window;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GameController {
 
@@ -25,7 +26,8 @@ public class GameController {
 
         window.setSize(new Dimension(boardManager.getBoard().getWidth() * Square.SIZE, boardManager.getBoard().getWidth() * Square.SIZE));
 
-        bar = new MenuBar();
+        ArrayList<Colony> colonies = boardManager.getSetting().getColonies();
+        bar = new MenuBar(colonies);
         canvas = new Canvas(boardManager.getBoard());
 
         prepareComponents();
@@ -65,17 +67,16 @@ public class GameController {
         w.setSize(200, 200);
 
         JPanel p = new JPanel();
-        p.add(new JLabel("Game Over! Winner is Colony number " + winner));
+        JLabel l = new JLabel("Game Over! Winner is Colony number " + winner);
+        p.add(l);
+
+        w.add(p);
 
         w.makeVisible();
     }
 
     private void loop(){
         while (isRunning) {
-            for (Colony colony : boardManager.getSetting().getColonies()) {
-                System.out.printf("%f ", colony.getCoins());
-            }
-
             int winner = boardManager.isGameOver();
             if(winner != -1){
                 stop();
@@ -83,6 +84,7 @@ public class GameController {
             }
 
             updateBoard(boardManager.getBoard());
+            bar.updateColonyCoins();
             boardManager.step();
 
             try {

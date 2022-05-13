@@ -16,7 +16,7 @@ public class Main {
                 }
         );
 
-        BoardManager boardManager = new BoardManager(setting,40, 30);
+        BoardManager boardManager = new BoardManager(setting,80, 80);
 
         Pattern pat = boardManager.getSetting().getColony(1).getStrategy().generatePattern();
         Matrix<Worker> mat = pat.toWorkerMatrix(1);

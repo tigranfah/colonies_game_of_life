@@ -1,15 +1,23 @@
 package gui.layout;
 
+import core.Colony;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class MenuBar extends JMenuBar {
 
     private JMenuItem[] colonyInformation;
+    private ArrayList<Colony> colonies;
 
-    public MenuBar(){
+    public MenuBar(ArrayList<Colony> colonies){
+        this.colonies = colonies;
         prepareMenus();
+
+        prepareColonyInformationMenus();
     }
 
     private void prepareMenus(){
@@ -34,7 +42,19 @@ public class MenuBar extends JMenuBar {
         add(actions);
     }
 
-    private void prepareColonyInformationMenus(int n){
+    private void prepareColonyInformationMenus(){
+        colonyInformation = new JMenuItem[colonies.size()];
+        for(int i = 0; i < colonies.size(); i++){
+            colonyInformation[i] = new JMenuItem("Colony " + (i + 1));
+        }
+    }
 
+    public void updateColonyCoins(){
+        colonies.forEach(new Consumer<Colony>() {
+            public void accept(Colony colony) {
+                int i = colony.getColonyIndex() - 1;
+                colonyInformation[i].setText("Colony " + i +" has " + colony.getCoins() + " points.");
+            }
+        });
     }
 }
