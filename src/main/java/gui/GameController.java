@@ -88,8 +88,7 @@ public class GameController {
             boardManager.step();
 
             try {
-                int generationsPerSecond = 10;
-                Thread.sleep(1000 / generationsPerSecond);
+                Thread.sleep(1000 / (GameSetting.GENERATIONS_PER_SECOND));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

@@ -5,4 +5,5 @@ SRC_DIR="src/main/java"
 cd src/main/java
 javac **/*.java Main.java
 
-java Main
+echo $@
+java Main $@
