@@ -24,7 +24,7 @@ public class GameController {
     public GameController(BoardManager boardManager){
         this.boardManager = boardManager;
         window = new Window();
-        window.setSize(new Dimension(boardManager.getBoard().getWidth() * Square.SIZE, boardManager.getBoard().getWidth() * Square.SIZE));
+        window.setSize(new Dimension(boardManager.getBoard().getWidth() * Square.SIZE, boardManager.getBoard().getHeight() * Square.SIZE));
 
         ArrayList<Colony> colonies = boardManager.getSetting().getColonies();
         bar = new MenuBar(colonies);

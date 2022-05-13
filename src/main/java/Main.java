@@ -9,17 +9,6 @@ public class Main {
 
     public static void main(String[] args) throws InvalidCommandLineArgumentException {
 
-//        GameSetting setting = new GameSetting(BoardManager.GameType.COLONIES);
-//        setting.setKingPositions(
-//                new Position[] {
-//                        new Position(10, 10),
-//                        new Position(30, 45),
-//                        new Position(65, 65),
-//                }
-//        );
-//
-//        BoardManager boardManager = new BoardManager(setting,80, 80);
-
         BoardManager boardManager = CommandLineArgumentParser.parseArgumentsToBoardManager(args);
 
         Renderer renderer = new Renderer();
@@ -31,7 +20,7 @@ public class Main {
 
             while (true) {
                 for (Colony col : boardManager.getSetting().getColonies())
-                    System.out.printf("Colony %d: coints %f \n", col.getColonyIndex(), col.getCoins());
+                    System.out.printf("Colony %d: coins %f \n", col.getColonyIndex(), col.getCoins());
 
                 renderer.render(boardManager.getBoard());
                 boardManager.step();

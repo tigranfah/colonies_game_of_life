@@ -38,7 +38,7 @@ public class CommandLineArgumentParser {
 
         Position[] kingPositions = new Position[numberOfColonies];
         for (int i = 0; i < kingPositions.length; ++i) {
-            kingPositions[i] = Position.generateRandomly(0, width, 0, height);
+            kingPositions[i] = Position.generateRandomly(0, width, 0, height - 5);
         }
 
         setting.setKingPositions(kingPositions);

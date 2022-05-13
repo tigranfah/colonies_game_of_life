@@ -7,7 +7,18 @@ import java.awt.*;
 
 public class Canvas extends JPanel {
 
-    private static final Color[] defaultColors = new Color[]{ Color.RED, Color.BLUE, Color.MAGENTA };
+    public static final Color[] defaultColors = new Color[]{
+            Color.RED,
+            Color.BLUE,
+            Color.MAGENTA,
+            Color.GREEN,
+            new Color(123, 8, 1),
+            new Color(3, 123, 63),
+            new Color(53, 13, 90),
+            new Color(255, 153, 204),
+            new Color(204, 255, 153),
+            new Color(153, 0, 204),
+    };
 
     private Board board;
 
@@ -26,17 +37,17 @@ public class Canvas extends JPanel {
                     Color cellColor = defaultColors[c.getColonyIndex() - 1];
 
                     if(c.toString().equals(String.valueOf(c.getColonyIndex()))){
-                        cellColor = Color.GREEN;
+                        cellColor = new Color(246, 162, 29);
                     }
 
-                    new Square(i, j, cellColor).render(graphics);
+                    new Square(j, i, cellColor).render(graphics);
                 }
                 else
-                    new Square(i, j).render(graphics);
+                    new Square(j, i).render(graphics);
             }
         }
 
-        Square.setupSquareGrid(graphics, 80, 80);
+        Square.setupSquareGrid(graphics, board.getWidth(), board.getHeight());
     }
 
     public void updateBoard(Board board){

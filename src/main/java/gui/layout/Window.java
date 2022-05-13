@@ -11,16 +11,16 @@ public class Window extends JFrame {
 
     public Window(){
         prepare();
-        centerOnScreen();
+//        centerOnScreen();
     }
 
     private void prepare(){
         setTitle("Group Project - Almost Game of Life");
 
-        setMinimumSize(MINIMUM_WINDOW_SIZE);
-        setSize(DEFAULT_WINDOW_SIZE);
+//        setMinimumSize(MINIMUM_WINDOW_SIZE);
+//        setSize(DEFAULT_WINDOW_SIZE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+//        setResizable(false);
     }
 
     private void centerOnScreen(){

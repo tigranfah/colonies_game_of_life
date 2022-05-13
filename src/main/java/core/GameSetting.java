@@ -1,5 +1,7 @@
 package core;
 
+import gui.elements.Canvas;
+
 import java.util.ArrayList;
 
 public class GameSetting {
@@ -17,6 +19,11 @@ public class GameSetting {
     }
 
     public void setKingPositions(Position[] kingPositions) {
+        if (kingPositions.length > Canvas.defaultColors.length) {
+            throw new IllegalArgumentException(
+                    "The maximum number of colonies can be " + Canvas.defaultColors.length
+            );
+        }
         if (this.type == BoardManager.GameType.STANDARD) {
             System.err.println("Cannot have king position in a standard game setting.");
             return;
