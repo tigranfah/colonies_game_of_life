@@ -23,18 +23,18 @@ class Square {
 
     public void render(Graphics graphics){
         graphics.setColor(background);
-        graphics.fillRect(SIZE + (SIZE * x), SIZE + (SIZE * y), SIZE, SIZE);
+        graphics.fillRect((SIZE * x), (SIZE * y), SIZE, SIZE);
     }
 
     public static void setupSquareGrid(Graphics graphics, int width, int height){
         graphics.setColor(Color.BLACK);
 
         for (int i=0; i <= width; i++) {
-            graphics.drawLine((i * SIZE) + SIZE, SIZE, (i * SIZE) + SIZE, SIZE + (SIZE * height));
+            graphics.drawLine((i * SIZE), 0, (i * SIZE), (SIZE * height));
         }
 
         for (int i=0; i <= height; i++) {
-            graphics.drawLine(SIZE,(i * SIZE) + SIZE, SIZE * (width + 1), (i * SIZE ) + SIZE);
+            graphics.drawLine(0 ,(i * SIZE), SIZE * (width + 1), (i * SIZE ));
         }
     }
 }

@@ -12,8 +12,8 @@ public class Main {
         setting.setKingPositions(
                 new Position[] {
                         new Position(10, 10),
-                        new Position(30, 15),
-                        new Position(45, 15),
+                        new Position(30, 45),
+                        new Position(65, 65),
                 }
         );
 
