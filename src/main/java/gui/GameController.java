@@ -8,6 +8,8 @@ import gui.layout.Window;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class GameController {
@@ -21,9 +23,7 @@ public class GameController {
 
     public GameController(BoardManager boardManager){
         this.boardManager = boardManager;
-
         window = new Window();
-
         window.setSize(new Dimension(boardManager.getBoard().getWidth() * Square.SIZE, boardManager.getBoard().getWidth() * Square.SIZE));
 
         ArrayList<Colony> colonies = boardManager.getSetting().getColonies();
@@ -66,9 +66,9 @@ public class GameController {
         Window w = new Window();
         w.setSize(200, 200);
 
-        JPanel p = new JPanel();
+        JPanel p = new JPanel(new BorderLayout());
         JLabel l = new JLabel("Game Over! Winner is Colony number " + winner);
-        p.add(l);
+        p.add(l, BorderLayout.CENTER);
 
         w.add(p);
 
@@ -76,7 +76,9 @@ public class GameController {
     }
 
     private void loop(){
-        while (isRunning) {
+        while (true) {
+            if(!isRunning) return;
+
             int winner = boardManager.isGameOver();
             if(winner != -1){
                 stop();
