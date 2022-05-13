@@ -25,18 +25,18 @@ public class Main {
                 renderer.render(boardManager.getBoard());
                 boardManager.step();
 
+                if (boardManager.isGameOver() != -1) {
+                    System.out.printf(
+                            "Game is over. Won the colony %d.\n",
+                            boardManager.isGameOver()
+                    );
+                    System.exit(0);
+                }
+
                 try {
                     Thread.sleep(1000 / (GameSetting.GENERATIONS_PER_SECOND));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                }
-
-                if (boardManager.isGameOver() != -1) {
-                    System.out.printf(
-                            "Game is over. Won the colony %d.\n",
-                            boardManager.getSetting().getColonies().get(0).getColonyIndex()
-                    );
-                    System.exit(0);
                 }
             }
 
