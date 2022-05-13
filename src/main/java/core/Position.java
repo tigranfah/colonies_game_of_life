@@ -60,4 +60,11 @@ public class Position implements Cloneable {
         return newPos;
     }
 
+    public static Position generateRandomly(int x0, int x1, int y0, int y1) {
+        int x = ((int) (Math.random() * x1)) - x0;
+        int y = ((int) (Math.random() * y1)) - y0;
+
+        return new Position(x, y);
+    }
+
 }

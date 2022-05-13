@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 public class GameSetting {
 
+    public static int GENERATIONS_PER_SECOND = 10;
+
     private BoardManager.GameType type;
     private ArrayList<Colony> colonies;
+    private boolean guiOn = false;
 
     public GameSetting(BoardManager.GameType type) {
         if (type == null)
@@ -38,6 +41,14 @@ public class GameSetting {
                 }
             }
         }
+    }
+
+    public boolean isGuiOn() {
+        return guiOn;
+    }
+
+    public void setGuiOn(boolean guiOn) {
+        this.guiOn = guiOn;
     }
 
     protected void removeColony(Colony colony) {
