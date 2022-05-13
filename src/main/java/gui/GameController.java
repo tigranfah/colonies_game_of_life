@@ -4,50 +4,42 @@ import core.*;
 import gui.elements.Canvas;
 import gui.layout.MenuBar;
 import gui.layout.Window;
-import utils.Matrix;
-import utils.Pattern;
-
-import javax.swing.*;
 
 public class GameController {
+
+    private final BoardManager boardManager;
     private final Window window;
     private final Canvas canvas;
     private final MenuBar bar;
 
-    public static void main(String[] args) {
-        GameSetting setting = new GameSetting(BoardManager.GameType.COLONIES);
-        setting.setKingPositions(
-                new Position[] {
-                        new Position(10, 10),
-                        new Position(30, 15)
-                }
-        );
-        BoardManager boardManager = new BoardManager(setting,80, 80);
+    private boolean isRunning = false;
 
+    public GameController(BoardManager boardManager){
+        this.boardManager = boardManager;
 
-        Pattern pat = boardManager.getSetting().getColony(1).getStrategy().generatePattern();
-        Matrix<Worker> mat = pat.toWorkerMatrix(1);
-
-        GameController g = new GameController(boardManager.getBoard());
-
-        while(true){
-            boardManager.step();
-            g.updateBoard(boardManager.getBoard());
-
-            try {
-                Thread.sleep(100);
-            }catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public GameController(Board board){
         window = new Window();
         bar = new MenuBar();
-        canvas = new Canvas(board);
+        canvas = new Canvas(boardManager.getBoard());
 
         prepareComponents();
+    }
+
+    public boolean isRunning(){
+        return isRunning;
+    }
+
+    public void start(){
+        isRunning = true;
+    }
+
+    public void stop(){
+        isRunning = false;
+    }
+
+    public void run(){
+        start();
+
+        loop();
     }
 
     private void prepareComponents(){
@@ -57,7 +49,25 @@ public class GameController {
         window.makeVisible();
     }
 
-    public void updateBoard(Board board){
+    private void updateBoard(Board board){
         canvas.updateBoard(board);
+    }
+
+    private void loop(){
+        while (isRunning) {
+            for (Colony colony : boardManager.getSetting().getColonies()) {
+                System.out.printf("%f ", colony.getCoins());
+            }
+
+            updateBoard(boardManager.getBoard());
+            boardManager.step();
+
+            try {
+                int generationsPerSecond = 10;
+                Thread.sleep(1000 / generationsPerSecond);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }
