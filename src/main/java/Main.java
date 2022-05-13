@@ -1,4 +1,3 @@
-
 import core.*;
 import gui.GameController;
 import utils.Matrix;
@@ -17,12 +16,11 @@ public class Main {
                 }
         );
 
-        BoardManager boardManager = new BoardManager(setting,80, 80);
+        BoardManager boardManager = new BoardManager(setting,40, 30);
 
         Pattern pat = boardManager.getSetting().getColony(1).getStrategy().generatePattern();
         Matrix<Worker> mat = pat.toWorkerMatrix(1);
         GameController g = new GameController(boardManager);
-
 
         g.run();
     }

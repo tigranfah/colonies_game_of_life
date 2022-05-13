@@ -3,7 +3,7 @@ package gui.elements;
 import java.awt.*;
 import java.util.ConcurrentModificationException;
 
-class Square {
+public class Square {
 
     public static final int SIZE = 10;
 
